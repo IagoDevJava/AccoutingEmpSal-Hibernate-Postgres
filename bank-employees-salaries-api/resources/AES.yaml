@@ -1,0 +1,76 @@
+openapi: 3.0.1
+info:
+  title: Формирование отчетов для AES и компонентов моделей и dto
+  version: 1.0.0
+tags:
+  - name: AesApi
+
+paths:
+  /api/v1/work-schedules:
+    post:
+      tags:
+        - WorkScheduleController
+      description: Добавить график в БД
+      operationId: addSchedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkSchedule"
+      responses:
+        200:
+          description: Успешный вызов
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkScheduleDto"
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+
+components:
+  schemas:
+
+    #Models
+    WorkSchedule:
+      type: object
+      properties:
+        id:
+          description: id таблицы
+          tyre: integer
+          format: int64
+        workDay:
+          description: Количество рабочих дней
+          type: integer
+          format: int32
+        weekDay:
+          description: Количество выходных дней
+          type: integer
+          format: int32
+        workHour:
+          description: Количество рабочих часов в день
+          type: integer
+          format: int32
+
+    #DTO
+    WorkScheduleDto:
+      type: object
+      properties:
+        id:
+          description: id таблицы
+          tyre: integer
+          format: int64
+        workDay:
+          description: Количество рабочих дней
+          type: integer
+          format: int32
+        weekDay:
+          description: Количество выходных дней
+          type: integer
+          format: int32
+        workHour:
+          description: Количество рабочих часов в день
+          type: integer
+          format: int32
