@@ -1,7 +1,7 @@
 package com.anybank.mapper;
 
-import com.anybank.bankemployeessalaries.dto.KpiDto;
-import com.anybank.bankemployeessalaries.model.Kpi;
+import com.anybank.dto.*;
+import com.anybank.model.*;
 
 import java.util.ArrayList;
 import java.util.List;

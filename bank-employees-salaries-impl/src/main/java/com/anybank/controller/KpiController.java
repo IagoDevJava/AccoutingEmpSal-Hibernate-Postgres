@@ -1,8 +1,11 @@
 package com.anybank.controller;
 
-import com.anybank.bankemployeessalaries.dto.KpiDto;
-import com.anybank.bankemployeessalaries.model.Kpi;
-import com.anybank.bankemployeessalaries.service.KpiService;
+
+import com.anybank.dto.*;
+import com.anybank.model.*;
+import com.anybank.service.KpiService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +13,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController

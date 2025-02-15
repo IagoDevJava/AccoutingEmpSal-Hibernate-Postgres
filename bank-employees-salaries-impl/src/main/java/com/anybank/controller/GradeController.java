@@ -3,6 +3,8 @@ package com.anybank.controller;
 import com.anybank.dto.GradeDto;
 import com.anybank.model.Grade;
 import com.anybank.service.GradeService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +12,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -20,6 +20,7 @@ import java.util.List;
 @RequestMapping("/grades")
 public class GradeController {
     private final GradeService gradeService;
+
     /**
      * Добавление грейда в БД
      */

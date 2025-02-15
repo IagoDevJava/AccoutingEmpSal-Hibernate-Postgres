@@ -1,11 +1,11 @@
 package com.anybank.model;
 
 import com.anybank.enum_model.JobStatus;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 

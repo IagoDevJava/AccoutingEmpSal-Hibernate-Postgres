@@ -1,5 +1,6 @@
 package com.anybank.dto;
 
+
 import lombok.Builder;
 import lombok.Data;
 

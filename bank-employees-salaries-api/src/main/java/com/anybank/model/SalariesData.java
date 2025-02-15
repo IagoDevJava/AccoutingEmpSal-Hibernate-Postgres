@@ -1,11 +1,10 @@
 package com.anybank.model;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.UniqueElements;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @ToString

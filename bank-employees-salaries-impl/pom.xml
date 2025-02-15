@@ -12,11 +12,11 @@
     <artifactId>bank-employees-salaries-impl</artifactId>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <start-class>com.anybank.AccountingEmployeesSalariesApplication</start-class>
     </properties>
+
     <dependencies>
+        <!--        Into        -->
         <dependency>
             <groupId>com.anybank</groupId>
             <artifactId>bank-employees-salaries-api</artifactId>

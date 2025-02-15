@@ -4,7 +4,7 @@ package com.anybank.service;
 import com.anybank.dto.PositionDto;
 import com.anybank.model.Position;
 
-import javax.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 public interface PositionService {
