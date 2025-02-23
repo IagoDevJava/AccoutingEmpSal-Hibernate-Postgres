@@ -1,12 +1,15 @@
 package com.anybank.controller;
 
 
-import com.anybank.dto.*;
-import com.anybank.model.*;
+import com.anybank.api.KpiApi;
+import com.anybank.api.model.WorkSchedule;
+import com.anybank.api.model.WorkScheduleDto;
+import com.anybank.dto.KpiDto;
+import com.anybank.model.Kpi;
 import com.anybank.service.KpiService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Isolation;
@@ -17,17 +20,18 @@ import java.util.List;
 
 @RestController
 @Transactional(isolation = Isolation.READ_COMMITTED)
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/kpis")
-public class KpiController {
+public class KpiController implements KpiApi {
     private final KpiService kpiService;
 
     /**
      * Добавление kpi в БД
      */
+    @Override
     @Transactional
     @PostMapping
-    public ResponseEntity<KpiDto> addKpi(@Valid @RequestBody Kpi kpi) {
+    public ResponseEntity<WorkScheduleDto> addKpi(WorkSchedule kpi) {
         return ResponseEntity.ok(kpiService.addKpi(kpi));
     }
 

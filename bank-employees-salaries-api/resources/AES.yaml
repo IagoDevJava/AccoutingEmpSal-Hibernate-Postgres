@@ -6,12 +6,36 @@ tags:
   - name: AesApi
 
 paths:
-  /api/v1/work-schedules:
+  /work-schedules:
     post:
       tags:
-        - WorkScheduleController
+        - WorkSchedule
       description: Добавить график в БД
       operationId: addSchedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkSchedule"
+      responses:
+        200:
+          description: Успешный вызов
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkScheduleDto"
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+
+  /kpis:
+    post:
+      tags:
+        - Kpi
+      description: Добавить kpi в БД
+      operationId: addKpi
       requestBody:
         required: true
         content:
