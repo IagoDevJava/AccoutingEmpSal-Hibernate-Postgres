@@ -1,0 +1,62 @@
+openapi: 3.0.1
+info:
+  title: Формирование моделей и dto для AES
+  version: 1.0.0
+
+paths: { }
+
+components:
+  schemas:
+
+    #Models
+    AttendanceData:
+      type: object
+      properties:
+        id:
+          description: id таблицы
+          type: integer
+          format: int64
+        dateAtt:
+          description: Дата посещения сотрудником
+          type: string
+          format: date
+          example: 2000-01-01
+        employee:
+          description: Сотрудник
+          type: string
+#          $ref: 'EmployeeDto.yaml#/components/schemas/Employee'
+        status:
+          description: Статус присутствия на рабочем месте
+          $ref: '#/components/schemas/AttendanceStatus'
+
+    #DTO
+    AttendanceDataDto:
+      type: object
+      properties:
+        id:
+          description: id таблицы
+          tyre: integer
+          format: int64
+        dateAtt:
+          description: Дата посещения сотрудником
+          type: string
+          format: date
+          example: 2000-01-01
+        employeeId:
+          description: Сотрудник
+          type: integer
+          format: int32
+        status:
+          description: Статус присутствия на рабочем месте
+          $ref: '#/components/schemas/AttendanceStatus'
+
+    AttendanceStatus:
+      type: string
+      enum:
+        - Working
+        - Absent
+        - Medical
+        - Vacation
+        - Unpaid Leave
+        - Maternity Leave
+        - Study Leave

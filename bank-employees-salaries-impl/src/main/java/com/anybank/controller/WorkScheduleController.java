@@ -1,6 +1,5 @@
 package com.anybank.controller;
 
-
 import com.anybank.dto.WorkScheduleDto;
 import com.anybank.model.WorkSchedule;
 import com.anybank.service.WorkScheduleService;
@@ -19,7 +18,7 @@ import java.util.List;
 @Transactional(isolation = Isolation.READ_COMMITTED)
 @AllArgsConstructor
 @RequestMapping("/work-schedules")
-public class WorkScheduleController {
+public class WorkScheduleController{
     private final WorkScheduleService workScheduleService;
 
     /**

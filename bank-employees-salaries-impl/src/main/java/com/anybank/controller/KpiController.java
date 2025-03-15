@@ -1,9 +1,5 @@
 package com.anybank.controller;
 
-
-import com.anybank.api.KpiApi;
-import com.anybank.api.model.WorkSchedule;
-import com.anybank.api.model.WorkScheduleDto;
 import com.anybank.dto.KpiDto;
 import com.anybank.model.Kpi;
 import com.anybank.service.KpiService;
@@ -22,16 +18,15 @@ import java.util.List;
 @Transactional(isolation = Isolation.READ_COMMITTED)
 @RequiredArgsConstructor
 @RequestMapping("/kpis")
-public class KpiController implements KpiApi {
+public class KpiController {
     private final KpiService kpiService;
 
     /**
      * Добавление kpi в БД
      */
-    @Override
     @Transactional
     @PostMapping
-    public ResponseEntity<WorkScheduleDto> addKpi(WorkSchedule kpi) {
+    public ResponseEntity<KpiDto> addKpi(Kpi kpi) {
         return ResponseEntity.ok(kpiService.addKpi(kpi));
     }
 

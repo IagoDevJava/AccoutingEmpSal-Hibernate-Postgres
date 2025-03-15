@@ -1,7 +1,9 @@
 package com.anybank.controller;
 
-import com.anybank.dto.AttendanceDataDto;
-import com.anybank.model.AttendanceData;
+import com.anybank.api.AttendanceDataApi;
+
+import com.anybank.api.model.AttendanceData;
+import com.anybank.api.model.AttendanceDataDto;
 import com.anybank.service.AttendanceDataService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -21,15 +23,15 @@ import java.util.Objects;
 @Transactional(isolation = Isolation.READ_COMMITTED)
 @AllArgsConstructor
 @RequestMapping("/attendance-data")
-public class AttendanceDataController {
+public class AttendanceDataController implements AttendanceDataApi {
     private final AttendanceDataService attendanceDataService;
 
     /**
      * Ввести данные за день
      */
     @Transactional
-    @PostMapping()
-    public ResponseEntity<AttendanceDataDto> addAttendanceData(@Valid @RequestBody AttendanceData attendanceData) {
+    @Override
+    public ResponseEntity<AttendanceDataDto> addAttendanceData(AttendanceData attendanceData) {
         return ResponseEntity.ok(attendanceDataService.addAttendanceData(attendanceData));
     }
 
@@ -37,9 +39,8 @@ public class AttendanceDataController {
      * Изменить данные за день
      */
     @Transactional
-    @PatchMapping("/{id}")
-    public ResponseEntity<AttendanceDataDto> updateAttendanceData(@RequestBody AttendanceData attendanceData,
-                                                                  @PathVariable @PositiveOrZero Long id) {
+    @Override
+    public ResponseEntity<AttendanceDataDto> updateAttendanceData(Long id, AttendanceData attendanceData) {
         return ResponseEntity.ok(attendanceDataService.updateAttendanceData(attendanceData, id));
     }
 

@@ -1,0 +1,54 @@
+openapi: 3.0.1
+info:
+  title: Формирование моделей и dto для AES
+  version: 1.0.0
+
+paths: { }
+
+components:
+  schemas:
+
+    #Models
+    WorkSchedule:
+      type: object
+      properties:
+        id:
+          description: id таблицы
+          tyre: integer
+          format: int64
+        workDay:
+          description: Количество рабочих дней
+          type: integer
+          format: int32
+          example: 5
+        weekDay:
+          description: Количество выходных дней
+          type: integer
+          format: int32
+          example: 2
+        workHour:
+          description: Количество рабочих часов в день
+          type: integer
+          format: int32
+          example: 8
+
+    #DTO
+    WorkScheduleDto:
+      type: object
+      properties:
+        id:
+          description: id таблицы
+          tyre: integer
+          format: int64
+        workDay:
+          description: Количество рабочих дней
+          type: integer
+          format: int32
+        weekDay:
+          description: Количество выходных дней
+          type: integer
+          format: int32
+        workHour:
+          description: Количество рабочих часов в день
+          type: integer
+          format: int32

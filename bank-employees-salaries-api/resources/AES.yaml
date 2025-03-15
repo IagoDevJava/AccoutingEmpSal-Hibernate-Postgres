@@ -6,6 +6,235 @@ tags:
   - name: AesApi
 
 paths:
+#  /attendance-data
+  /attendance-data/add:
+    post:
+      tags:
+        - AttendanceData
+      description: Ввести данные за день
+      operationId: addAttendanceData
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceData'
+      responses:
+        200:
+          description: Успешный вызов
+          content:
+            application/json:
+              schema:
+                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+  /attendance-data/add/{id}:
+    patch:
+      tags:
+        - AttendanceData
+      description: Обновить данные за день
+      operationId: updateAttendanceData
+      parameters:
+        - name: id
+          description: Айди обновляемых данных
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceData'
+      responses:
+        200:
+          description: Успешный вызов
+          content:
+            application/json:
+              schema:
+                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+  /attendance-data/delete/{date}:
+    delete:
+      tags:
+        - AttendanceData
+      description: Удалить данные за день
+      operationId: deleteAttendanceDataByDay
+      parameters:
+        - name: date
+          description: Дата за которую надо удалить данные
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        200:
+          description: Успешный вызов
+          content:
+            application/json:
+              schema:
+                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+  /attendance-data/delete:
+    delete:
+      tags:
+        - AttendanceData
+      description: Удалить все данные
+      operationId: deleteAttendanceData
+      responses:
+        200:
+          description: Успешный вызов
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+  /attendance-data/delete/{employeeId}:
+    delete:
+      tags:
+        - AttendanceData
+      description: Удалить данные по сотруднику
+      operationId: deleteAttendanceDataByEmployee
+      parameters:
+        - name: employeeId
+          description: Идентификатор сотрудника по которому надо удалить данные
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: Успешный вызов
+          content:
+            application/json:
+              schema:
+                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+  /attendance-data/get/{id}:
+    get:
+      tags:
+        - AttendanceData
+      description: Получить данные по идентификатору
+      operationId: getAttendanceDataById
+      parameters:
+        - name: id
+          description: идентификатор данных посещаемости
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: Успешный вызов
+          content:
+            application/json:
+              schema:
+                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+  /attendance-data/get/period:
+    get:
+      tags:
+        - AttendanceData
+      description: Получить данные за период
+      operationId: getAttendanceDataByPeriod
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      responses:
+        200:
+          description: Успешный вызов
+          content:
+            application/json:
+              schema:
+                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+  /attendance-data/get/period/{employeeId}:
+    get:
+      tags:
+        - AttendanceData
+      description: Получить данные по сотруднику за период
+      operationId: getAttendanceDataByPeriod
+      parameters:
+        - name: employeeId
+          description: Идентификатор сотрудника по которому надо получить данные
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      responses:
+        200:
+          description: Успешный вызов
+          content:
+            application/json:
+              schema:
+                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+  /attendance-data/get/period/{departmentId}:
+    get:
+      tags:
+        - AttendanceData
+      description: Получить данные по сотруднику за период
+      operationId: getAttendanceDataByPeriod
+      parameters:
+        - name: departmentId
+          description: Идентификатор отдела по которому надо получить данные
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      responses:
+        200:
+          description: Успешный вызов
+          content:
+            application/json:
+              schema:
+                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+
   /work-schedules:
     post:
       tags:
@@ -17,84 +246,39 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/WorkSchedule"
+              $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkSchedule'
       responses:
         200:
           description: Успешный вызов
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WorkScheduleDto"
+                $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkScheduleDto'
         400:
           description: Некорректный по формату запрос
         500:
           description: Системная ошибка
 
-  /kpis:
-    post:
-      tags:
-        - Kpi
-      description: Добавить kpi в БД
-      operationId: addKpi
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/WorkSchedule"
-      responses:
-        200:
-          description: Успешный вызов
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/WorkScheduleDto"
-        400:
-          description: Некорректный по формату запрос
-        500:
-          description: Системная ошибка
-
-components:
-  schemas:
-
-    #Models
-    WorkSchedule:
-      type: object
-      properties:
-        id:
-          description: id таблицы
-          tyre: integer
-          format: int64
-        workDay:
-          description: Количество рабочих дней
-          type: integer
-          format: int32
-        weekDay:
-          description: Количество выходных дней
-          type: integer
-          format: int32
-        workHour:
-          description: Количество рабочих часов в день
-          type: integer
-          format: int32
-
-    #DTO
-    WorkScheduleDto:
-      type: object
-      properties:
-        id:
-          description: id таблицы
-          tyre: integer
-          format: int64
-        workDay:
-          description: Количество рабочих дней
-          type: integer
-          format: int32
-        weekDay:
-          description: Количество выходных дней
-          type: integer
-          format: int32
-        workHour:
-          description: Количество рабочих часов в день
-          type: integer
-          format: int32
+#  /kpis:
+#    post:
+#      tags:
+#        - Kpi
+#      description: Добавить kpi в БД
+#      operationId: addKpi
+#      requestBody:
+#        required: true
+#        content:
+#          application/json:
+#            schema:
+#              $ref: "#/components/schemas/WorkSchedule"
+#      responses:
+#        200:
+#          description: Успешный вызов
+#          content:
+#            application/json:
+#              schema:
+#                $ref: "#/components/schemas/WorkScheduleDto"
+#        400:
+#          description: Некорректный по формату запрос
+#        500:
+#          description: Системная ошибка
