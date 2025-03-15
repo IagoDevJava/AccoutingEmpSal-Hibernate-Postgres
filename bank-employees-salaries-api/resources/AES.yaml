@@ -6,7 +6,7 @@ tags:
   - name: AesApi
 
 paths:
-#  /attendance-data
+#attendance-data
   /attendance-data:
     post:
       tags:
@@ -228,6 +228,137 @@ paths:
           description: Некорректный по формату запрос
         500:
           description: Системная ошибка
+
+  #department
+  /department:
+    post:
+      tags:
+        - Department
+      description: Добавить департамент
+      operationId: addDepartment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'DepartmentDto.yaml#/components/schemas/Department'
+      responses:
+        200:
+          description: Успешный вызов
+          content:
+            application/json:
+              schema:
+                $ref: 'DepartmentDto.yaml#/components/schemas/DepartmentDto'
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+    delete:
+      tags:
+        - Department
+      description: Удалить все департаменты
+      operationId: deleteDepartments
+      responses:
+        200:
+          description: Успешный вызов
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+    get:
+      tags:
+        - Department
+      description: Получить все департаменты
+      operationId: getDepartments
+      responses:
+        200:
+          description: Успешный вызов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'DepartmentDto.yaml#/components/schemas/DepartmentDto'
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+  /department/{id}:
+    patch:
+      tags:
+        - Department
+      description: Обновить данные за день
+      operationId: updateDepartmentById
+      parameters:
+        - name: id
+          description: Айди департамента
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'DepartmentDto.yaml#/components/schemas/Department'
+      responses:
+        200:
+          description: Успешный вызов
+          content:
+            application/json:
+              schema:
+                $ref: 'DepartmentDto.yaml#/components/schemas/DepartmentDto'
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+    delete:
+      tags:
+        - Department
+      description: Удалить департамент по идентификатору
+      operationId: deleteDepartmentById
+      parameters:
+        - name: id
+          description: идентификатор департамента
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Успешный вызов
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+    get:
+      tags:
+        - Department
+      description: Получить департамент по идентификатору
+      operationId: getDepartmentById
+      parameters:
+        - name: id
+          description: Идентификатор департамента
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Успешный вызов
+          content:
+            application/json:
+              schema:
+                $ref: 'DepartmentDto.yaml#/components/schemas/DepartmentDto'
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+
 
 #  /work-schedules:
 #    post:

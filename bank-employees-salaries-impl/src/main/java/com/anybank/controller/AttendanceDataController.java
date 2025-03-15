@@ -9,7 +9,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -94,7 +93,6 @@ public class AttendanceDataController implements AttendanceDataApi {
   /**
    * Изменить данные за день
    */
-  @Transactional
   @Override
   public ResponseEntity<AttendanceDataDto> updateAttendanceData(Long id,
       AttendanceData attendanceData) {

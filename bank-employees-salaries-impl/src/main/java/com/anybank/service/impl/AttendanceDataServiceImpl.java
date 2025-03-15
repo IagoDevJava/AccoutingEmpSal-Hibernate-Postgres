@@ -8,11 +8,11 @@ import com.anybank.mapper.AttendanceDataMapper;
 import com.anybank.repository.AttendanceDataRepository;
 import com.anybank.service.AttendanceDataService;
 import java.util.List;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AttendanceDataServiceImpl implements AttendanceDataService {
 
   private final AttendanceDataRepository attendanceDataRepository;

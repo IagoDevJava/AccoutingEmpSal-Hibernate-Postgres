@@ -1,0 +1,59 @@
+openapi: 3.0.1
+info:
+  title: Формирование моделей и dto для AES
+  version: 1.0.0
+
+paths: { }
+
+components:
+  schemas:
+
+    #Models
+    Department:
+      type: object
+      properties:
+        id:
+          description: id таблицы
+          type: integer
+          format: int64
+        name:
+          description: Наименование департамента
+          type: string
+        address:
+          description: Адрес департамента
+          type: string
+        phone:
+          description: Номер телефона департамента
+          type: string
+        email:
+          description: email департамента
+          type: string
+        headId:
+          description: Идентификатор руководителя департамента
+          type: integer
+          format: int64
+
+    #DTO
+    DepartmentDto:
+      type: object
+      properties:
+        id:
+          description: id таблицы
+          type: integer
+          format: int64
+        name:
+          description: Наименование департамента
+          type: string
+        address:
+          description: Адрес департамента
+          type: string
+        phone:
+          description: Номер телефона департамента
+          type: string
+        email:
+          description: email департамента
+          type: string
+        headId:
+          description: Идентификатор руководителя департамента
+          type: integer
+          format: int64

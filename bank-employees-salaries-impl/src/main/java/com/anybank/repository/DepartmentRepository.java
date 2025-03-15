@@ -1,8 +1,9 @@
 package com.anybank.repository;
 
 
-import com.anybank.model.Department;
+import com.anybank.api.model.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DepartmentRepository extends JpaRepository<Department, Integer> {
+public interface DepartmentRepository extends JpaRepository<Department, Long> {
+
 }

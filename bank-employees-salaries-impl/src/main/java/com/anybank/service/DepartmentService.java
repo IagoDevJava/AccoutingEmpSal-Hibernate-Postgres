@@ -1,40 +1,38 @@
 package com.anybank.service;
 
-
-import com.anybank.dto.DepartmentDto;
-import com.anybank.model.Department;
-
+import com.anybank.api.model.Department;
+import com.anybank.api.model.DepartmentDto;
 import java.util.List;
 
 public interface DepartmentService {
 
-    /**
-     * Добавление департамента в БД
-     */
-    DepartmentDto addDepartment(Department department);
+  /**
+   * Добавление департамента в БД
+   */
+  DepartmentDto addDepartment(Department department);
 
-    /**
-     * Обновление департамента в БД
-     */
-    DepartmentDto updateDepartment(Department department, Integer id);
+  /**
+   * Обновление департамента в БД
+   */
+  DepartmentDto updateDepartmentById(Long id, Department department);
 
-    /**
-     * Удаление всех департаментов из БД
-     */
-    void deleteDepartment();
+  /**
+   * Удаление всех департаментов из БД
+   */
+  void deleteDepartments();
 
-    /**
-     * Удаление департамента по id из БД
-     */
-    void deleteDepartmentById(Integer id);
+  /**
+   * Удаление департамента по id из БД
+   */
+  void deleteDepartmentById(Long id);
 
-    /**
-     * Получение списка департаментов из БД
-     */
-    List<DepartmentDto> getDepartment();
+  /**
+   * Получение списка департаментов из БД
+   */
+  List<DepartmentDto> getDepartments();
 
-    /**
-     * Получение департамента по id
-     */
-    DepartmentDto findDepartmentById(Integer id);
+  /**
+   * Получение департамента по id
+   */
+  DepartmentDto getDepartmentById(Long id);
 }
