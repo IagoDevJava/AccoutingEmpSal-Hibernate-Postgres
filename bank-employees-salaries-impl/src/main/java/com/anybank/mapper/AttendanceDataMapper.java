@@ -1,7 +1,7 @@
 package com.anybank.mapper;
 
-import com.anybank.dto.AttendanceDataDto;
-import com.anybank.model.AttendanceData;
+import com.anybank.api.model.AttendanceData;
+import com.anybank.api.model.AttendanceDataDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,12 +9,11 @@ import java.util.List;
 public class AttendanceDataMapper {
     //AttendanceData to AttendanceDataDto
     public static AttendanceDataDto toAttendanceDataDto(AttendanceData attendanceData) {
-        return AttendanceDataDto.builder()
+        return new AttendanceDataDto()
                 .id(attendanceData.getId())
                 .dateAtt(attendanceData.getDateAtt())
                 .employeeId(attendanceData.getEmployee().getId())
-                .attendanceStatus(attendanceData.getStatus())
-                .build();
+                .status(attendanceData.getStatus());
     }
 
     //AttendanceDataList to AttendanceDataDtoList

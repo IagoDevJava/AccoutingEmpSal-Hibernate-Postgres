@@ -1,7 +1,8 @@
 package com.anybank.service;
 
-import com.anybank.dto.AttendanceDataDto;
-import com.anybank.model.AttendanceData;
+import com.anybank.api.model.AttendanceData;
+import com.anybank.api.model.AttendanceDataDto;
+import com.anybank.api.model.DateTimePeriod;
 
 import java.util.List;
 
@@ -17,37 +18,37 @@ public interface AttendanceDataService {
     AttendanceDataDto updateAttendanceData(AttendanceData attendanceData, Long id);
 
     /**
-     * Удалить данные за день
-     */
-    void deleteAttendanceDataByDay(String date);
-
-    /**
      * Удалить все данные
      */
     void deleteAttendanceData();
 
     /**
-     * Удалить данные по сотруднику
-     */
-    void deleteAttendanceDataByEmployee(Integer employeeId);
-
-    /**
      * получить данные за период
      */
-    List<AttendanceDataDto> getAttendanceDataByPeriod(String start, String end);
+    List<AttendanceDataDto> getAttendanceDataByPeriod(DateTimePeriod period);
 
     /**
      * получить данные по сотруднику за период
      */
-    List<AttendanceDataDto> getAttendanceDataByPeriodByEmployee(Integer employeeId, String start, String end);
+    List<AttendanceDataDto> getAttendanceDataByPeriodByEmployee(Long employeeId, DateTimePeriod period);
 
     /**
-     * получить данные по отделу за период
+     * Удалить данные по идентификатору
      */
-    List<AttendanceDataDto> getAttendanceDataByPeriodByDepartment(Integer departmentId, String start, String end);
+    void deleteAttendanceDataById(Long id);
 
     /**
-     * получить данные по id
+     * Удалить данные за период
      */
-    AttendanceDataDto getAttendanceDataById(Long id);
+    void deleteAttendanceDataByPeriod(DateTimePeriod body);
+
+    /**
+     * Удалить данные за период по сотруднику
+     */
+    void deleteAttendanceDataByPeriodByEmployee(Long employeeId, DateTimePeriod body);
+
+    /**
+     * получить данные по департаменту за период
+     */
+    List<AttendanceDataDto> getAttendanceDataByDepartmentByPeriod(Long departmentId, DateTimePeriod body);
 }

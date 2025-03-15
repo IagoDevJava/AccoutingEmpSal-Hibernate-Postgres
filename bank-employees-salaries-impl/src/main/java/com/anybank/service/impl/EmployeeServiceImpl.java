@@ -1,10 +1,8 @@
 package com.anybank.service.impl;
 
-import com.anybank.dto.EmployeeDto;
 import com.anybank.enum_model.JobStatus;
 import com.anybank.exception.EmployeeNotFoundException;
 import com.anybank.mapper.EmployeeMapper;
-import com.anybank.model.Employee;
 import com.anybank.repository.EmployeeRepository;
 import com.anybank.service.EmployeeService;
 import lombok.AllArgsConstructor;

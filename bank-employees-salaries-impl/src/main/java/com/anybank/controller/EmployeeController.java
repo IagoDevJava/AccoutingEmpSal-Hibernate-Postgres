@@ -1,7 +1,5 @@
 package com.anybank.controller;
 
-import com.anybank.dto.EmployeeDto;
-import com.anybank.model.Employee;
 import com.anybank.service.EmployeeService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.PositiveOrZero;

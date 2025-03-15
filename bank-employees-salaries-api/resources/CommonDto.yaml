@@ -14,10 +14,8 @@ components:
         begin:
           description: Дата начала периода
           type: string
-          format: datetime
-          example: 2000-01-01
+          format: date-time
         end:
           description: Дата окончания периода
           type: string
-          format: datetime
-          example: 2000-01-01
+          format: date-time

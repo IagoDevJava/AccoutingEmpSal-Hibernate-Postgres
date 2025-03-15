@@ -89,7 +89,7 @@
                                 <library>spring-mvc</library>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useBeanValidation>true</useBeanValidation>
-                                <java8>true</java8>
+                                <java8>false</java8>
                                 <serializableModel>true</serializableModel>
                             </configOptions>
                         </configuration>

@@ -21,10 +21,10 @@ components:
           type: string
           format: date
           example: 2000-01-01
-        employee:
+        employeeId:
           description: Сотрудник
-          type: string
-#          $ref: 'EmployeeDto.yaml#/components/schemas/Employee'
+          type: integer
+          format: int64
         status:
           description: Статус присутствия на рабочем месте
           $ref: '#/components/schemas/AttendanceStatus'
@@ -45,7 +45,7 @@ components:
         employeeId:
           description: Сотрудник
           type: integer
-          format: int32
+          format: int64
         status:
           description: Статус присутствия на рабочем месте
           $ref: '#/components/schemas/AttendanceStatus'

@@ -1,8 +1,5 @@
 package com.anybank.service;
 
-import com.anybank.dto.EmployeeDto;
-import com.anybank.model.Employee;
-
 import java.util.List;
 
 public interface EmployeeService {

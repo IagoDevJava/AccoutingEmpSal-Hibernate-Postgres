@@ -1,123 +1,77 @@
 package com.anybank.service.impl;
 
-import com.anybank.dto.AttendanceDataDto;
+import com.anybank.api.model.AttendanceData;
+import com.anybank.api.model.AttendanceDataDto;
+import com.anybank.api.model.DateTimePeriod;
 import com.anybank.exception.AttendanceDataNotFoundException;
 import com.anybank.mapper.AttendanceDataMapper;
-import com.anybank.model.AttendanceData;
 import com.anybank.repository.AttendanceDataRepository;
-import com.anybank.repository.DepartmentRepository;
-import com.anybank.repository.EmployeeRepository;
 import com.anybank.service.AttendanceDataService;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class AttendanceDataServiceImpl implements AttendanceDataService {
-    private final AttendanceDataRepository attendanceDataRepository;
-    private final EmployeeRepository employeeRepository;
-    private final DepartmentRepository departmentRepository;
 
-    /**
-     * Ввести данные за день
-     */
-    @Override
-    public AttendanceDataDto addAttendanceData(AttendanceData attendanceData) {
-        return AttendanceDataMapper.toAttendanceDataDto(attendanceDataRepository.save(attendanceData));
-    }
+  private final AttendanceDataRepository attendanceDataRepository;
 
-    /**
-     * Изменить данные за день
-     */
-    @Override
-    public AttendanceDataDto updateAttendanceData(AttendanceData attendanceData, Long id) {
-        AttendanceData attendanceById = attendanceDataRepository.findById(id)
-                .orElseThrow(() -> new AttendanceDataNotFoundException("Attendance not found"));
+  @Override
+  public AttendanceDataDto addAttendanceData(AttendanceData attendanceData) {
+    return AttendanceDataMapper.toAttendanceDataDto(attendanceDataRepository.save(attendanceData));
+  }
 
-        attendanceById.setId(id);
-        attendanceById.setDateAtt(attendanceData.getDateAtt());
-        attendanceById.setEmployeeId(attendanceData.getEmployee());
-        attendanceById.setStatus(attendanceData.getStatus());
+  @Override
+  public void deleteAttendanceData() {
+    attendanceDataRepository.deleteAll();
+  }
 
-        return AttendanceDataMapper.toAttendanceDataDto(attendanceDataRepository.save(attendanceById));
-    }
+  @Override
+  public void deleteAttendanceDataById(Long id) {
+    attendanceDataRepository.deleteById(id);
+  }
 
-    /**
-     * Удалить данные за день
-     */
-    @Override
-    public void deleteAttendanceDataByDay(String date) {
-        attendanceDataRepository.findAttendanceDataByDateAtt(LocalDate.parse(date))
-                .orElseThrow(() -> new AttendanceDataNotFoundException("Attendance with date not found"));
-        attendanceDataRepository.deleteAttendanceDataByDateAtt(LocalDate.parse(date));
-    }
+  @Override
+  public void deleteAttendanceDataByPeriod(DateTimePeriod period) {
+    attendanceDataRepository.deleteBetweenBeginAndEnd(period.getBegin(), period.getEnd());
+  }
 
-    /**
-     * Удалить все данные
-     */
-    @Override
-    public void deleteAttendanceData() {
-        attendanceDataRepository.deleteAll();
-    }
+  @Override
+  public void deleteAttendanceDataByPeriodByEmployee(Long employeeId, DateTimePeriod period) {
+    attendanceDataRepository.deleteByEmployeeBetweenBeginAndEnd(employeeId, period.getBegin(),
+        period.getEnd());
+  }
 
-    /**
-     * Удалить данные по сотруднику
-     */
-    @Override
-    public void deleteAttendanceDataByEmployee(Integer employeeId) {
-        employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new AttendanceDataNotFoundException("Employee not found"));
-        attendanceDataRepository.deleteAttendanceDataByEmployee(employeeId);
-    }
+  @Override
+  public List<AttendanceDataDto> getAttendanceDataByDepartmentByPeriod(Long departmentId,
+      DateTimePeriod period) {
+    return attendanceDataRepository.findAttendanceDataByDepartmentByPeriod(departmentId,
+        period.getBegin(), period.getEnd());
+  }
 
-    /**
-     * получить данные за период
-     */
-    @Override
-    public List<AttendanceDataDto> getAttendanceDataByPeriod(String start, String end) {
-        return AttendanceDataMapper.toAttendanceDataDtoList(
-                attendanceDataRepository
-                        .findAttendanceDataByDateAttBetween(LocalDate.parse(start), LocalDate.parse(end)));
-    }
+  @Override
+  public List<AttendanceDataDto> getAttendanceDataByPeriod(DateTimePeriod period) {
+    return attendanceDataRepository.findAttendanceDataByPeriod(period.getBegin(), period.getEnd());
+  }
 
-    /**
-     * получить данные по сотруднику за период
-     */
-    @Override
-    public List<AttendanceDataDto> getAttendanceDataByPeriodByEmployee(Integer employeeId, String start, String end) {
-        employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new AttendanceDataNotFoundException("Employee not found"));
+  @Override
+  public List<AttendanceDataDto> getAttendanceDataByPeriodByEmployee(Long employeeId,
+      DateTimePeriod period) {
+    return attendanceDataRepository.findAttendanceDataByEmployeeByPeriod(employeeId,
+        period.getBegin(), period.getEnd());
+  }
 
-        return AttendanceDataMapper.toAttendanceDataDtoList(
-                attendanceDataRepository.findAttendanceDataByEmployeeAndDateAttBetween(
-                        employeeId, LocalDate.parse(start), LocalDate.parse(end))
-        );
-    }
+  @Override
+  public AttendanceDataDto updateAttendanceData(AttendanceData attendanceData, Long id) {
+    AttendanceData attendanceById = attendanceDataRepository.findById(id)
+        .orElseThrow(() -> new AttendanceDataNotFoundException("Attendance not found"));
 
-    /**
-     * получить данные по отделу за период
-     */
-    @Override
-    public List<AttendanceDataDto> getAttendanceDataByPeriodByDepartment(
-            Integer departmentId, String start, String end) {
-        departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new AttendanceDataNotFoundException("Department not found"));
+    attendanceById.setId(id);
+    attendanceById.setDateAtt(attendanceData.getDateAtt());
+    attendanceById.setEmployeeId(attendanceData.getEmployeeId());
+    attendanceById.setStatus(attendanceData.getStatus());
 
-        return AttendanceDataMapper.toAttendanceDataDtoList(
-                attendanceDataRepository.findAttendanceDataByDepIdToPeriod(
-                        departmentId, LocalDate.parse(start), LocalDate.parse(end))
-        );
-    }
-
-    /**
-     * получить данные по id
-     */
-    @Override
-    public AttendanceDataDto getAttendanceDataById(Long id) {
-        return AttendanceDataMapper.toAttendanceDataDto(attendanceDataRepository.findById(id)
-                .orElseThrow(() -> new AttendanceDataNotFoundException("Attendance not found")));
-    }
+    return AttendanceDataMapper.toAttendanceDataDto(attendanceDataRepository.save(attendanceById));
+  }
 }

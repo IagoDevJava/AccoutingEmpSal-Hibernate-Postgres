@@ -1,30 +1,40 @@
 package com.anybank.repository;
 
-import com.anybank.model.AttendanceData;
+import com.anybank.api.model.AttendanceData;
+import com.anybank.api.model.AttendanceDataDto;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import org.threeten.bp.OffsetDateTime;
 
 public interface AttendanceDataRepository extends JpaRepository<AttendanceData, Long> {
-    void deleteAttendanceDataByDateAtt(LocalDate dateAtt);
 
-    void deleteAttendanceDataByEmployee(Integer empId);
+  void deleteBetweenBeginAndEnd(OffsetDateTime begin, OffsetDateTime end);
 
-    List<AttendanceData> findAttendanceDataByDateAttBetween(LocalDate start, LocalDate end);
+  void deleteByEmployeeBetweenBeginAndEnd(Long employeeId, OffsetDateTime begin,
+      OffsetDateTime end);
 
-    List<AttendanceData> findAttendanceDataByEmployeeAndDateAttBetween(Integer empId, LocalDate start, LocalDate end);
+  @Query(value = """
+      SELECT at.id, at.date_att, at.employee_id, at.status
+      FROM attendance_data AS at
+               LEFT JOIN employees e on e.id = at.employee_id
+      WHERE e.department_id = ?
+        AND (date_att between ? AND ?)""", nativeQuery = true)
+  List<AttendanceDataDto> findAttendanceDataByDepartmentByPeriod(Long departmentId,
+      OffsetDateTime begin, OffsetDateTime end);
 
-    @Query(value = """
-            SELECT at.id, at.date_att, at.employee_id, at.status
-            FROM attendance_data AS at
-                     LEFT JOIN employees e on e.id = at.employee_id
-            WHERE e.department_id = ?
-              AND (date_att between ? AND ?)""", nativeQuery = true)
-    List<AttendanceData> findAttendanceDataByDepIdToPeriod(Integer depId, LocalDate start, LocalDate end);
+  @Query(value = """
+      SELECT at.id, at.date_att, at.employee_id, at.status
+      FROM attendance_data AS at
+      WHERE (date_att between ? AND ?)""", nativeQuery = true)
+  List<AttendanceDataDto> findAttendanceDataByPeriod(OffsetDateTime begin, OffsetDateTime end);
 
-    Optional<AttendanceData> findAttendanceDataByDateAtt(LocalDate date);
-//    List<AttendanceData> findAttendanceDataByEmployeeId(Integer id);
+  @Query(value = """
+      SELECT at.id, at.date_att, at.employee_id, at.status
+      FROM attendance_data AS at
+               LEFT JOIN employees e on e.id = at.employee_id
+      WHERE e.employee_id = ?
+        AND (date_att between ? AND ?)""", nativeQuery = true)
+  List<AttendanceDataDto> findAttendanceDataByEmployeeByPeriod(Long employeeId,
+      OffsetDateTime begin, OffsetDateTime end);
 }

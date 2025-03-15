@@ -7,7 +7,7 @@ tags:
 
 paths:
 #  /attendance-data
-  /attendance-data/add:
+  /attendance-data:
     post:
       tags:
         - AttendanceData
@@ -30,7 +30,19 @@ paths:
           description: Некорректный по формату запрос
         500:
           description: Системная ошибка
-  /attendance-data/add/{id}:
+    delete:
+      tags:
+        - AttendanceData
+      description: Удалить все данные
+      operationId: deleteAttendanceData
+      responses:
+        200:
+          description: Успешный вызов
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+  /attendance-data/{id}:
     patch:
       tags:
         - AttendanceData
@@ -61,75 +73,11 @@ paths:
           description: Некорректный по формату запрос
         500:
           description: Системная ошибка
-  /attendance-data/delete/{date}:
-    delete:
-      tags:
-        - AttendanceData
-      description: Удалить данные за день
-      operationId: deleteAttendanceDataByDay
-      parameters:
-        - name: date
-          description: Дата за которую надо удалить данные
-          in: path
-          required: true
-          schema:
-            type: string
-            format: date
-      responses:
-        200:
-          description: Успешный вызов
-          content:
-            application/json:
-              schema:
-                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
-        400:
-          description: Некорректный по формату запрос
-        500:
-          description: Системная ошибка
-  /attendance-data/delete:
-    delete:
-      tags:
-        - AttendanceData
-      description: Удалить все данные
-      operationId: deleteAttendanceData
-      responses:
-        200:
-          description: Успешный вызов
-        400:
-          description: Некорректный по формату запрос
-        500:
-          description: Системная ошибка
-  /attendance-data/delete/{employeeId}:
     delete:
       tags:
         - AttendanceData
       description: Удалить данные по сотруднику
-      operationId: deleteAttendanceDataByEmployee
-      parameters:
-        - name: employeeId
-          description: Идентификатор сотрудника по которому надо удалить данные
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        200:
-          description: Успешный вызов
-          content:
-            application/json:
-              schema:
-                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
-        400:
-          description: Некорректный по формату запрос
-        500:
-          description: Системная ошибка
-  /attendance-data/get/{id}:
-    get:
-      tags:
-        - AttendanceData
-      description: Получить данные по идентификатору
-      operationId: getAttendanceDataById
+      operationId: deleteAttendanceDataById
       parameters:
         - name: id
           description: идентификатор данных посещаемости
@@ -137,19 +85,15 @@ paths:
           required: true
           schema:
             type: integer
-            format: int32
+            format: int64
       responses:
         200:
           description: Успешный вызов
-          content:
-            application/json:
-              schema:
-                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
         400:
           description: Некорректный по формату запрос
         500:
           description: Системная ошибка
-  /attendance-data/get/period:
+  /attendance-data/period:
     get:
       tags:
         - AttendanceData
@@ -167,17 +111,37 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+                type: array
+                items:
+                  $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
         400:
           description: Некорректный по формату запрос
         500:
           description: Системная ошибка
-  /attendance-data/get/period/{employeeId}:
+    delete:
+      tags:
+        - AttendanceData
+      description: Удалить данные за день
+      operationId: deleteAttendanceDataByPeriod
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      responses:
+        200:
+          description: Успешный вызов
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+  /attendance-data/{employeeId}/period:
     get:
       tags:
         - AttendanceData
       description: Получить данные по сотруднику за период
-      operationId: getAttendanceDataByPeriod
+      operationId: getAttendanceDataByPeriodByEmployee
       parameters:
         - name: employeeId
           description: Идентификатор сотрудника по которому надо получить данные
@@ -185,7 +149,7 @@ paths:
           required: true
           schema:
             type: integer
-            format: int32
+            format: int64
       requestBody:
         required: true
         content:
@@ -198,17 +162,45 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+                type: array
+                items:
+                  $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
         400:
           description: Некорректный по формату запрос
         500:
           description: Системная ошибка
-  /attendance-data/get/period/{departmentId}:
+    delete:
+      tags:
+        - AttendanceData
+      description: Удалить данные за день
+      operationId: deleteAttendanceDataByPeriodByEmployee
+      parameters:
+        - name: employeeId
+          description: Идентификатор сотрудника по которому надо получить данные
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      responses:
+        200:
+          description: Успешный вызов
+        400:
+          description: Некорректный по формату запрос
+        500:
+          description: Системная ошибка
+  /attendance-data/{departmentId}/period:
     get:
       tags:
         - AttendanceData
       description: Получить данные по сотруднику за период
-      operationId: getAttendanceDataByPeriod
+      operationId: getAttendanceDataByDepartmentByPeriod
       parameters:
         - name: departmentId
           description: Идентификатор отдела по которому надо получить данные
@@ -216,7 +208,7 @@ paths:
           required: true
           schema:
             type: integer
-            format: int32
+            format: int64
       requestBody:
         required: true
         content:
@@ -229,35 +221,37 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+                type: array
+                items:
+                  $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
         400:
           description: Некорректный по формату запрос
         500:
           description: Системная ошибка
 
-  /work-schedules:
-    post:
-      tags:
-        - WorkSchedule
-      description: Добавить график в БД
-      operationId: addSchedule
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkSchedule'
-      responses:
-        200:
-          description: Успешный вызов
-          content:
-            application/json:
-              schema:
-                $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkScheduleDto'
-        400:
-          description: Некорректный по формату запрос
-        500:
-          description: Системная ошибка
+#  /work-schedules:
+#    post:
+#      tags:
+#        - WorkSchedule
+#      description: Добавить график в БД
+#      operationId: addSchedule
+#      requestBody:
+#        required: true
+#        content:
+#          application/json:
+#            schema:
+#              $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkSchedule'
+#      responses:
+#        200:
+#          description: Успешный вызов
+#          content:
+#            application/json:
+#              schema:
+#                $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkScheduleDto'
+#        400:
+#          description: Некорректный по формату запрос
+#        500:
+#          description: Системная ошибка
 
 #  /kpis:
 #    post:
