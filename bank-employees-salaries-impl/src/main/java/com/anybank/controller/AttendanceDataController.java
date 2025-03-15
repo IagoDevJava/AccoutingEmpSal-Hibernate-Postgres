@@ -6,18 +6,14 @@ import com.anybank.api.model.AttendanceDataDto;
 import com.anybank.api.model.DateTimePeriod;
 import com.anybank.service.AttendanceDataService;
 import java.util.List;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Transactional(isolation = Isolation.READ_COMMITTED)
-@AllArgsConstructor
-@RequestMapping("/attendance-data")
+@RequiredArgsConstructor
 public class AttendanceDataController implements AttendanceDataApi {
 
   private final AttendanceDataService attendanceDataService;
@@ -33,7 +29,6 @@ public class AttendanceDataController implements AttendanceDataApi {
   /**
    * Удалить все данные
    */
-  @Transactional
   @Override
   public ResponseEntity<Void> deleteAttendanceData() {
     attendanceDataService.deleteAttendanceData();
