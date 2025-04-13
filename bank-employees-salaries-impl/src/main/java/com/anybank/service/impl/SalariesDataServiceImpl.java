@@ -28,7 +28,7 @@ public class SalariesDataServiceImpl implements SalariesDataService {
      * Заменить данные о зарплате в БД
      */
     @Override
-    public SalariesDataDto updateSalariesData(SalariesData salariesData, Integer id) {
+    public SalariesDataDto updateSalariesData(SalariesData salariesData, Long id) {
         SalariesData salariesDataById = salariesDateRepository.findById(id)
                 .orElseThrow(() -> new SalariesDataNotFoundException("SalariesData not found"));
 
@@ -52,7 +52,7 @@ public class SalariesDataServiceImpl implements SalariesDataService {
      * Удалить данные зарплаты в БД по id
      */
     @Override
-    public void deleteSalariesDataById(Integer id) {
+    public void deleteSalariesDataById(Long id) {
         salariesDateRepository.deleteById(id);
     }
 
@@ -68,7 +68,7 @@ public class SalariesDataServiceImpl implements SalariesDataService {
      * Получить данные зарплаты в БД по id
      */
     @Override
-    public SalariesDataDto getSalariesDataById(Integer id) {
+    public SalariesDataDto getSalariesDataById(Long id) {
         return SalariesDataMapper.toSalariesDataDto(salariesDateRepository.findById(id)
                 .orElseThrow(() -> new SalariesDataNotFoundException("SalariesData not found")));
     }

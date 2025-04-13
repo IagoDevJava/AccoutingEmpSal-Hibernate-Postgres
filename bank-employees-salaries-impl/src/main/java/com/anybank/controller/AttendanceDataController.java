@@ -1,10 +1,11 @@
 package com.anybank.controller;
 
-import com.anybank.api.AttendanceDataApi;
-import com.anybank.api.model.AttendanceData;
-import com.anybank.api.model.AttendanceDataDto;
-import com.anybank.api.model.DateTimePeriod;
+
 import com.anybank.service.AttendanceDataService;
+import com.egorov.api.AttendanceDataApi;
+import com.egorov.model.AttendanceData;
+import com.egorov.model.AttendanceDataDto;
+import com.egorov.model.DateTimePeriod;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,16 +22,16 @@ public class AttendanceDataController implements AttendanceDataApi {
    * Ввести данные за день
    */
   @Override
-  public ResponseEntity<AttendanceDataDto> addAttendanceData(AttendanceData data) {
-    return ResponseEntity.ok(attendanceDataService.addAttendanceData(data));
+  public ResponseEntity<AttendanceDataDto> createAttendanceData(AttendanceData data) {
+    return ResponseEntity.ok(attendanceDataService.createAttendanceData(data));
   }
 
   /**
    * Удалить все данные
    */
   @Override
-  public ResponseEntity<Void> deleteAttendanceData() {
-    attendanceDataService.deleteAttendanceData();
+  public ResponseEntity<Void> deleteAllAttendanceData() {
+    attendanceDataService.deleteAllAttendanceData();
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
@@ -56,9 +57,9 @@ public class AttendanceDataController implements AttendanceDataApi {
    * Удалить данные за период по сотруднику
    */
   @Override
-  public ResponseEntity<Void> deleteAttendanceDataByPeriodByEmployee(Long employeeId,
+  public ResponseEntity<Void> deleteEmployeeAttendanceDataByPeriod(Long employeeId,
       DateTimePeriod period) {
-    attendanceDataService.deleteAttendanceDataByPeriodByEmployee(employeeId, period);
+    attendanceDataService.deleteEmployeeAttendanceDataByPeriod(employeeId, period);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
@@ -66,10 +67,10 @@ public class AttendanceDataController implements AttendanceDataApi {
    * получить данные по департаменту за период
    */
   @Override
-  public ResponseEntity<List<AttendanceDataDto>> getAttendanceDataByDepartmentByPeriod(
+  public ResponseEntity<List<AttendanceDataDto>> getDepartmentAttendanceDataByPeriod(
       Long departmentId, DateTimePeriod period) {
     return ResponseEntity.ok(
-        attendanceDataService.getAttendanceDataByDepartmentByPeriod(departmentId, period));
+        attendanceDataService.getDepartmentAttendanceDataByPeriod(departmentId, period));
   }
 
   /**
@@ -84,10 +85,10 @@ public class AttendanceDataController implements AttendanceDataApi {
    * получить данные по сотруднику за период
    */
   @Override
-  public ResponseEntity<List<AttendanceDataDto>> getAttendanceDataByPeriodByEmployee(
+  public ResponseEntity<List<AttendanceDataDto>> getEmployeeAttendanceDataByPeriod(
       Long employeeId, DateTimePeriod period) {
     return ResponseEntity.ok(
-        attendanceDataService.getAttendanceDataByPeriodByEmployee(employeeId, period));
+        attendanceDataService.getEmployeeAttendanceDataByPeriod(employeeId, period));
   }
 
   /**

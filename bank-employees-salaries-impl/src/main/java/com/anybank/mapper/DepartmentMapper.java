@@ -1,7 +1,7 @@
 package com.anybank.mapper;
 
-import com.anybank.api.model.Department;
-import com.anybank.api.model.DepartmentDto;
+import com.egorov.model.Department;
+import com.egorov.model.DepartmentDto;
 import java.util.ArrayList;
 import java.util.List;
 

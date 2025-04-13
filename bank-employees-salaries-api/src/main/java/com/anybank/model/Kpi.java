@@ -1,5 +1,6 @@
 package com.anybank.model;
 
+import org.openapitools.model.Employee;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

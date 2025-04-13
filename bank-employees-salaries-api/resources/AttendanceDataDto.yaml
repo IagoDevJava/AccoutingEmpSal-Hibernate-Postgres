@@ -1,55 +1,13 @@
 openapi: 3.0.1
 info:
-  title: Формирование моделей и dto для AES
+  title: Формирование моделей и DTO для AES
   version: 1.0.0
 
 paths: { }
 
 components:
   schemas:
-
-    #Models
-    AttendanceData:
-      type: object
-      properties:
-        id:
-          description: id таблицы
-          type: integer
-          format: int64
-        dateAtt:
-          description: Дата посещения сотрудником
-          type: string
-          format: date
-          example: 2000-01-01
-        employeeId:
-          description: Сотрудник
-          type: integer
-          format: int64
-        status:
-          description: Статус присутствия на рабочем месте
-          $ref: '#/components/schemas/AttendanceStatus'
-
-    #DTO
-    AttendanceDataDto:
-      type: object
-      properties:
-        id:
-          description: id таблицы
-          tyre: integer
-          format: int64
-        dateAtt:
-          description: Дата посещения сотрудником
-          type: string
-          format: date
-          example: 2000-01-01
-        employeeId:
-          description: Сотрудник
-          type: integer
-          format: int64
-        status:
-          description: Статус присутствия на рабочем месте
-          $ref: '#/components/schemas/AttendanceStatus'
-
+    # Общие элементы
     AttendanceStatus:
       type: string
       enum:
@@ -60,3 +18,37 @@ components:
         - Unpaid Leave
         - Maternity Leave
         - Study Leave
+
+    BaseAttendance:
+      type: object
+      properties:
+        id:
+          description: ID записи
+          type: integer
+          format: int64
+        dateAtt:
+          description: Дата посещения сотрудником
+          type: string
+          format: date
+          example: 2000-01-01
+        employeeId:
+          description: ID сотрудника
+          type: integer
+          format: int64
+        status:
+          description: Статус присутствия на рабочем месте
+          $ref: '#/components/schemas/AttendanceStatus'
+
+    # Модели
+    AttendanceData:
+      allOf:
+        - $ref: '#/components/schemas/BaseAttendance'
+        - type: object
+          description: Модель данных о посещаемости
+
+    # DTO
+    AttendanceDataDto:
+      allOf:
+        - $ref: '#/components/schemas/BaseAttendance'
+        - type: object
+          description: DTO для данных о посещаемости

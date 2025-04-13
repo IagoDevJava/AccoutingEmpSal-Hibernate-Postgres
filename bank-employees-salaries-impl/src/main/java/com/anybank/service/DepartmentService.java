@@ -1,7 +1,7 @@
 package com.anybank.service;
 
-import com.anybank.api.model.Department;
-import com.anybank.api.model.DepartmentDto;
+import com.egorov.model.Department;
+import com.egorov.model.DepartmentDto;
 import java.util.List;
 
 public interface DepartmentService {
@@ -9,17 +9,17 @@ public interface DepartmentService {
   /**
    * Добавление департамента в БД
    */
-  DepartmentDto addDepartment(Department department);
+  DepartmentDto createDepartment(Department department);
 
   /**
    * Обновление департамента в БД
    */
-  DepartmentDto updateDepartmentById(Long id, Department department);
+  DepartmentDto updateDepartment(Long id, Department department);
 
   /**
    * Удаление всех департаментов из БД
    */
-  void deleteDepartments();
+  void deleteAllDepartments();
 
   /**
    * Удаление департамента по id из БД
@@ -29,7 +29,7 @@ public interface DepartmentService {
   /**
    * Получение списка департаментов из БД
    */
-  List<DepartmentDto> getDepartments();
+  List<DepartmentDto> getAllDepartments();
 
   /**
    * Получение департамента по id

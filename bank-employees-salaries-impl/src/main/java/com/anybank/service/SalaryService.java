@@ -35,22 +35,22 @@ public interface SalaryService {
     /**
      * получить данные о зарплате по сотруднику за месяц
      */
-    SalaryDto getSalaryByMonthForEmployee(Integer employeeId, String month, String year);
+    SalaryDto getSalaryByMonthForEmployee(Long employeeId, String month, String year);
 
     /**
      * получить данные о зарплате по сотруднику за год
      */
-    List<SalaryDto> getSalaryByYearForEmployee(Integer employeeId, String year);
+    List<SalaryDto> getSalaryByYearForEmployee(Long employeeId, String year);
 
     /**
      * получить данные о зарплате по отделу за месяц
      */
-    List<SalaryDto> getSalaryByMonthForDepartment(Integer departmentId, String month, String year);
+    List<SalaryDto> getSalaryByMonthForDepartment(Long departmentId, String month, String year);
 
     /**
      * получить данные о зарплате по отделу за год
      */
-    List<SalaryDto> getSalaryByYearForDepartment(Integer departmentId, String year);
+    List<SalaryDto> getSalaryByYearForDepartment(Long departmentId, String year);
 
     /**
      * получить данные о зарплате по компании за месяц
@@ -65,7 +65,7 @@ public interface SalaryService {
     /**
      * Рассчитать данные о зарплате по сотруднику за месяц
      */
-    public Salary calculateSalaryByMonthForEmployee(Integer employeeId,
+    public Salary calculateSalaryByMonthForEmployee(Long employeeId,
                                                     String month,
                                                     String year,
                                                     Integer countWorkDays,

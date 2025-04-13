@@ -1,108 +1,71 @@
 openapi: 3.0.1
 info:
-  title: Формирование моделей и dto для AES
+  title: Формирование моделей и DTO для AES
   version: 1.0.0
 
-paths: { }
+paths: {}
 
 components:
   schemas:
+    # Общие свойства сотрудника
+    EmployeeBase:
+      type: object
+      properties:
+        id:
+          description: ID записи
+          type: integer
+          format: int64
+        lastName:
+          description: Фамилия сотрудника
+          type: string
+        firstName:
+          description: Имя сотрудника
+          type: string
+        middleName:
+          description: Отчество сотрудника
+          type: string
+        phone:
+          description: Номер телефона сотрудника
+          type: string
+        email:
+          description: Email сотрудника
+          type: string
+        department:
+          description: Департамент сотрудника
+          $ref: 'DepartmentDto.yaml#/components/schemas/Department'
+        position:
+          description: Должность сотрудника
+          type: string
+        workSchedule:
+          description: График работы
+          $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkSchedule'
+        dateOfAdmission:
+          description: Дата трудоустройства
+          type: string
+          format: date
+          example: 2000-01-01
+        dateOfDismissal:
+          description: Дата увольнения
+          type: string
+          format: date
+          example: 2000-01-01
+        jobStatus:
+          description: Рабочий статус
+          $ref: '#/components/schemas/JobStatus'
 
-    #Models
+    # Модель сотрудника
     Employee:
-      type: object
-      properties:
-        id:
-          description: id таблицы
-          type: integer
-          format: int64
-        lastName:
-          description: Фамилия сотрудника
-          type: string
-        firstName:
-          description: Имя сотрудника
-          type: string
-        middleName:
-          description: Отчество сотрудника
-          type: string
-        phone:
-          description: Номер телефона сотрудника
-          type: string
-        email:
-          description: email сотрудника
-          type: string
-        department:
-          description: Департамент в котором числится сотрудник
-          type: string
-          #          $ref: 'DepartmentDto.yaml#/components/schemas/Department'
-        position:
-          description: Должность сотрудника
-          type: string
-#          $ref: 'PositionDto.yaml#/components/schemas/Position'
-        workSchedule:
-          description: График работы сотрудника
-          $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkSchedule'
-        dateOfAdmission:
-          description: Дата трудоустройства сотрудника
-          type: string
-          format: date
-          example: 2000-01-01
-        dateOfDismissal:
-          description: Дата увольнения сотрудника
-          type: string
-          format: date
-          example: 2000-01-01
-        jobStatus:
-          description: Рабочий статус сотрудника
-          $ref: '#/components/schemas/JobStatus'
+      allOf:
+        - $ref: '#/components/schemas/EmployeeBase'
+        - type: object
+          description: Полная модель сотрудника
 
-    #DTO
+    # DTO сотрудника
     EmployeeDto:
-      type: object
-      properties:
-        id:
-          description: id таблицы
-          type: integer
-          format: int64
-        lastName:
-          description: Фамилия сотрудника
-          type: string
-        firstName:
-          description: Имя сотрудника
-          type: string
-        middleName:
-          description: Отчество сотрудника
-          type: string
-        phone:
-          description: Номер телефона сотрудника
-          type: string
-        email:
-          description: email сотрудника
-          type: string
-        department:
-          description: Департамент в котором числится сотрудник
-          type: string
-          #          $ref: 'DepartmentDto.yaml#/components/schemas/Department'
-        position:
-          description: Должность сотрудника
-          type: string
-        #          $ref: 'PositionDto.yaml#/components/schemas/Position'
-        workSchedule:
-          description: График работы сотрудника
-          $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkSchedule'
-        dateOfAdmission:
-          description: Дата трудоустройства сотрудника
-          type: string
-          format: date
-          example: 2000-01-01
-        dateOfDismissal:
-          description: Дата увольнения сотрудника
-          type: string
-          format: date
-          example: 2000-01-01
-        jobStatus:
-          description: Рабочий статус сотрудника
-          $ref: '#/components/schemas/JobStatus'
+      allOf:
+        - $ref: '#/components/schemas/EmployeeBase'
+        - type: object
+          description: DTO сотрудника
 
     JobStatus:
       type: string
@@ -110,3 +73,4 @@ components:
         - New
         - Working
         - Fired
+      description: Статус сотрудника в организации

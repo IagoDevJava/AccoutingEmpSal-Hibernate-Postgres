@@ -1,59 +1,55 @@
 openapi: 3.0.1
 info:
-  title: Формирование моделей и dto для AES
+  title: Формирование моделей и DTO для AES
+  description: API для работы с департаментами
   version: 1.0.0
 
 paths: { }
 
 components:
   schemas:
+    # Базовые свойства департамента
+    DepartmentBase:
+      type: object
+      properties:
+        id:
+          description: Уникальный идентификатор записи
+          type: integer
+          format: int64
+          example: 1
+        name:
+          description: Наименование департамента
+          type: string
+          example: "IT Департамент"
+        address:
+          description: Физический адрес департамента
+          type: string
+          example: "ул. Примерная, 123"
+        phone:
+          description: Контактный телефон в формате +7XXX...
+          type: string
+          example: "+74951234567"
+        email:
+          description: Электронная почта департамента
+          type: string
+          format: email
+          example: "it@example.com"
+        headId:
+          description: Идентификатор руководителя департамента
+          type: integer
+          format: int64
+          example: 101
 
-    #Models
+    # Модель департамента (может расширять базовую при необходимости)
     Department:
-      type: object
-      properties:
-        id:
-          description: id таблицы
-          type: integer
-          format: int64
-        name:
-          description: Наименование департамента
-          type: string
-        address:
-          description: Адрес департамента
-          type: string
-        phone:
-          description: Номер телефона департамента
-          type: string
-        email:
-          description: email департамента
-          type: string
-        headId:
-          description: Идентификатор руководителя департамента
-          type: integer
-          format: int64
+      allOf:
+        - $ref: '#/components/schemas/DepartmentBase'
+        - type: object
+          description: Полная модель департамента
 
-    #DTO
+    # DTO департамента (может расширять базовую при необходимости)
     DepartmentDto:
-      type: object
-      properties:
-        id:
-          description: id таблицы
-          type: integer
-          format: int64
-        name:
-          description: Наименование департамента
-          type: string
-        address:
-          description: Адрес департамента
-          type: string
-        phone:
-          description: Номер телефона департамента
-          type: string
-        email:
-          description: email департамента
-          type: string
-        headId:
-          description: Идентификатор руководителя департамента
-          type: integer
-          format: int64
+      allOf:
+        - $ref: '#/components/schemas/DepartmentBase'
+        - type: object
+          description: DTO для передачи данных департамента

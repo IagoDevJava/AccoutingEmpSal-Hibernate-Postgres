@@ -1,9 +1,9 @@
 package com.anybank.controller;
 
-import com.anybank.api.DepartmentApi;
-import com.anybank.api.model.Department;
-import com.anybank.api.model.DepartmentDto;
 import com.anybank.service.DepartmentService;
+import com.egorov.api.DepartmentApi;
+import com.egorov.model.Department;
+import com.egorov.model.DepartmentDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,8 +20,8 @@ public class DepartmentController implements DepartmentApi {
    * Добавление департамента в БД
    */
   @Override
-  public ResponseEntity<DepartmentDto> addDepartment(Department department) {
-    return ResponseEntity.ok(departmentService.addDepartment(department));
+  public ResponseEntity<DepartmentDto> createDepartment(Department department) {
+    return ResponseEntity.ok(departmentService.createDepartment(department));
   }
 
   /**
@@ -37,8 +37,8 @@ public class DepartmentController implements DepartmentApi {
    * Удаление всех департаментов из БД
    */
   @Override
-  public ResponseEntity<Void> deleteDepartments() {
-    departmentService.deleteDepartments();
+  public ResponseEntity<Void> deleteAllDepartments() {
+    departmentService.deleteAllDepartments();
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
@@ -54,15 +54,15 @@ public class DepartmentController implements DepartmentApi {
    * Получение списка департаментов из БД
    */
   @Override
-  public ResponseEntity<List<DepartmentDto>> getDepartments() {
-    return ResponseEntity.ok(departmentService.getDepartments());
+  public ResponseEntity<List<DepartmentDto>> getAllDepartments() {
+    return ResponseEntity.ok(departmentService.getAllDepartments());
   }
 
   /**
    * Обновление департамента в БД
    */
   @Override
-  public ResponseEntity<DepartmentDto> updateDepartmentById(Long id, Department department) {
-    return ResponseEntity.ok(departmentService.updateDepartmentById(id, department));
+  public ResponseEntity<DepartmentDto> updateDepartment(Long id, Department department) {
+    return ResponseEntity.ok(departmentService.updateDepartment(id, department));
   }
 }

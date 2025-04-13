@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.anybank</groupId>
@@ -9,88 +9,66 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <properties>
-        <swagger.codegen.plugin.version>3.0.63</swagger.codegen.plugin.version>
-    </properties>
-
     <artifactId>bank-employees-salaries-api</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.codegen.v3</groupId>
-            <artifactId>swagger-codegen-maven-plugin</artifactId>
-            <version>${swagger.codegen.plugin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>openapi-generator-maven-plugin</artifactId>
-            <version>6.6.0</version>
-        </dependency>
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
             <version>0.2.6</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-boot-starter</artifactId>-->
-<!--            <version>3.0.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-swagger-ui</artifactId>-->
-<!--            <version>3.0.0</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-            <scope>provided</scope>
-        </dependency>
-
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>io.swagger.codegen.v3</groupId>
-                <artifactId>swagger-codegen-maven-plugin</artifactId>
-                <version>${swagger.codegen.plugin.version}</version>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>6.6.0</version>
                 <executions>
                     <execution>
-                        <id>generate-v1</id>
+                        <id>generate-api</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${basedir}\resources\AES.yaml</inputSpec>
-                            <language>spring</language>
-                            <generateApis>true</generateApis>
-                            <modelPackage>com.anybank.api.model</modelPackage>
-                            <apiPackage>com.anybank.api</apiPackage>
-                            <environmentVariables>
-                                <hideGenerationTimestamp/>
-                            </environmentVariables>
+                            <inputSpec>${project.basedir}/resources/openapi.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+
+                            <!-- Пакеты для генерации -->
+                            <apiPackage>com.egorov.api</apiPackage>
+                            <modelPackage>com.egorov.model</modelPackage>
+                            <invokerPackage>com.egorov.invoker</invokerPackage>
+
                             <configOptions>
-                                <useTags>true</useTags>
-                                <sourceFolder>swagger</sourceFolder>
-                                <library>spring-mvc</library>
+                                <!-- Java 17 + Spring Boot 3.x настройки -->
+                                <java17>true</java17>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <recordComponents>true</recordComponents> <!-- Опционально: для records -->
+
+                                <!-- Общие настройки -->
+                                <sourceFolder>src/main/java</sourceFolder>
+                                <dateLibrary>java8</dateLibrary>
+                                <openApiNullable>false</openApiNullable>
+                                <useJakartaEe>true</useJakartaEe> <!-- Для Jakarta EE 9+ -->
+
+                                <!-- Настройки из вашего примера -->
                                 <interfaceOnly>true</interfaceOnly>
-                                <useBeanValidation>true</useBeanValidation>
-                                <java8>false</java8>
-                                <serializableModel>true</serializableModel>
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <useOptional>false</useOptional>
+
+                                <!-- Дополнительные рекомендации -->
+                                <serializationLibrary>jackson</serializationLibrary>
+                                <useResponseEntity>true</useResponseEntity>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <useTags>true</useTags> <!-- Для правильной группировки по тегам -->
+                                <performBeanValidation>true</performBeanValidation> <!-- Валидация моделей -->
                             </configOptions>
                         </configuration>
                     </execution>
@@ -98,5 +76,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

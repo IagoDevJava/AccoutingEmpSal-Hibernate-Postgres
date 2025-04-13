@@ -14,7 +14,7 @@ public interface SalariesDataService {
     /**
      * Заменить данные о зарплате в БД
      */
-    SalariesDataDto updateSalariesData(SalariesData salariesData, Integer id);
+    SalariesDataDto updateSalariesData(SalariesData salariesData, Long id);
 
     /**
      * Удалить все данные зарплат из БД
@@ -24,7 +24,7 @@ public interface SalariesDataService {
     /**
      * Удалить данные зарплаты в БД по id
      */
-    void deleteSalariesDataById(Integer id);
+    void deleteSalariesDataById(Long id);
 
     /**
      * Получить все данные зарплат в БД
@@ -34,5 +34,5 @@ public interface SalariesDataService {
     /**
      * Получить данные зарплаты в БД по id
      */
-    SalariesDataDto getSalariesDataById(Integer id);
+    SalariesDataDto getSalariesDataById(Long id);
 }

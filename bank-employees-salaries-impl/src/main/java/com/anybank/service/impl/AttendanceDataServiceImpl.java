@@ -1,12 +1,12 @@
 package com.anybank.service.impl;
 
-import com.anybank.api.model.AttendanceData;
-import com.anybank.api.model.AttendanceDataDto;
-import com.anybank.api.model.DateTimePeriod;
 import com.anybank.exception.AttendanceDataNotFoundException;
 import com.anybank.mapper.AttendanceDataMapper;
 import com.anybank.repository.AttendanceDataRepository;
 import com.anybank.service.AttendanceDataService;
+import com.egorov.model.AttendanceData;
+import com.egorov.model.AttendanceDataDto;
+import com.egorov.model.DateTimePeriod;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,12 +18,12 @@ public class AttendanceDataServiceImpl implements AttendanceDataService {
   private final AttendanceDataRepository attendanceDataRepository;
 
   @Override
-  public AttendanceDataDto addAttendanceData(AttendanceData attendanceData) {
+  public AttendanceDataDto createAttendanceData(AttendanceData attendanceData) {
     return AttendanceDataMapper.toAttendanceDataDto(attendanceDataRepository.save(attendanceData));
   }
 
   @Override
-  public void deleteAttendanceData() {
+  public void deleteAllAttendanceData() {
     attendanceDataRepository.deleteAll();
   }
 
@@ -38,13 +38,13 @@ public class AttendanceDataServiceImpl implements AttendanceDataService {
   }
 
   @Override
-  public void deleteAttendanceDataByPeriodByEmployee(Long employeeId, DateTimePeriod period) {
+  public void deleteEmployeeAttendanceDataByPeriod(Long employeeId, DateTimePeriod period) {
     attendanceDataRepository.deleteByEmployeeBetweenBeginAndEnd(employeeId, period.getBegin(),
         period.getEnd());
   }
 
   @Override
-  public List<AttendanceDataDto> getAttendanceDataByDepartmentByPeriod(Long departmentId,
+  public List<AttendanceDataDto> getDepartmentAttendanceDataByPeriod(Long departmentId,
       DateTimePeriod period) {
     return attendanceDataRepository.findAttendanceDataByDepartmentByPeriod(departmentId,
         period.getBegin(), period.getEnd());
@@ -56,7 +56,7 @@ public class AttendanceDataServiceImpl implements AttendanceDataService {
   }
 
   @Override
-  public List<AttendanceDataDto> getAttendanceDataByPeriodByEmployee(Long employeeId,
+  public List<AttendanceDataDto> getEmployeeAttendanceDataByPeriod(Long employeeId,
       DateTimePeriod period) {
     return attendanceDataRepository.findAttendanceDataByEmployeeByPeriod(employeeId,
         period.getBegin(), period.getEnd());

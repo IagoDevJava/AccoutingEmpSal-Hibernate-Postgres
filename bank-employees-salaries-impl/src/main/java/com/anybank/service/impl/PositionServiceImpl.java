@@ -28,7 +28,7 @@ public class PositionServiceImpl implements PositionService {
      * Обновление должности в БД
      */
     @Override
-    public PositionDto updatePosition(Position position, Integer id) {
+    public PositionDto updatePosition(Position position, Long id) {
         Position positionById = positionRepository.findById(id)
                 .orElseThrow(() -> new PositionNotFoundException("Position not found"));
 
@@ -52,7 +52,7 @@ public class PositionServiceImpl implements PositionService {
      * Удаление должности по id из БД
      */
     @Override
-    public void deletePositionById(Integer id) {
+    public void deletePositionById(Long id) {
         positionRepository.deleteById(id);
     }
 
@@ -68,7 +68,7 @@ public class PositionServiceImpl implements PositionService {
      * Получение должности по id
      */
     @Override
-    public PositionDto getPositionById(Integer id) {
+    public PositionDto getPositionById(Long id) {
         return PositionMapper.toPositionDto(positionRepository.findById(id)
                 .orElseThrow(() -> new PositionNotFoundException("Position not found")));
     }

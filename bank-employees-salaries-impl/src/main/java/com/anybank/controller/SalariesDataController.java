@@ -36,7 +36,7 @@ public class SalariesDataController {
     @Transactional
     @PatchMapping("/{id}")
     public ResponseEntity<SalariesDataDto> updateSalariesData(@RequestBody SalariesData salariesData,
-                                                              @PathVariable @PositiveOrZero Integer id) {
+                                                              @PathVariable @PositiveOrZero Long id) {
         return ResponseEntity.ok(salariesDataService.updateSalariesData(salariesData, id));
     }
 
@@ -55,7 +55,7 @@ public class SalariesDataController {
      */
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSalariesDataById(@PositiveOrZero @PathVariable Integer id) {
+    public ResponseEntity<Void> deleteSalariesDataById(@PositiveOrZero @PathVariable Long id) {
         salariesDataService.deleteSalariesDataById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -74,7 +74,7 @@ public class SalariesDataController {
      */
     @Transactional(readOnly = true)
     @GetMapping("/{id}")
-    public ResponseEntity<SalariesDataDto> getSalariesDataById(@PositiveOrZero @PathVariable Integer id) {
+    public ResponseEntity<SalariesDataDto> getSalariesDataById(@PositiveOrZero @PathVariable Long id) {
         return ResponseEntity.ok(salariesDataService.getSalariesDataById(id));
     }
 }

@@ -1,11 +1,11 @@
 package com.anybank.repository;
 
-import com.anybank.api.model.AttendanceData;
-import com.anybank.api.model.AttendanceDataDto;
+import com.egorov.model.AttendanceData;
+import com.egorov.model.AttendanceDataDto;
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.threeten.bp.OffsetDateTime;
 
 public interface AttendanceDataRepository extends JpaRepository<AttendanceData, Long> {
 

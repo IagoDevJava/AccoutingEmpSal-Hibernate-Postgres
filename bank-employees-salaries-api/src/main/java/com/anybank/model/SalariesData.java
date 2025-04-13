@@ -16,7 +16,7 @@ import org.hibernate.validator.constraints.UniqueElements;
 public class SalariesData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
+    Long id;
     @NotNull
     @Column
     Double wage;
@@ -29,7 +29,7 @@ public class SalariesData {
     @JoinColumn(name = "position_id")
     Position position;
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         if (id != null) this.id = id;
     }
 

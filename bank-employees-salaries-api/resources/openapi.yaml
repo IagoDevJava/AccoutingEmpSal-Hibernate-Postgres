@@ -1,0 +1,542 @@
+openapi: 3.0.1
+info:
+  title: API для работы с данными посещаемости, отделами и сотрудниками
+  version: 1.0.0
+  description: |
+    Система формирования отчетов для AES.
+    Включает компоненты для работы с моделями и DTO.
+servers:
+  - url: http://localhost:8080/api
+    description: Локальный сервер разработки
+  - url: https://api.example.com/v1
+    description: Продуктивный сервер
+
+tags:
+  - name: AttendanceData
+    description: Операции с данными посещаемости сотрудников
+  - name: Department
+    description: Операции с отделами компании
+  - name: Employee
+    description: Операции с сотрудниками компании
+  - name: WorkSchedule
+    description: Операции с графиками работы
+
+paths:
+  # ========== Attendance Data Endpoints ==========
+  /attendance-data:
+    post:
+      tags: [AttendanceData]
+      summary: Добавить данные посещаемости за день
+      operationId: createAttendanceData
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceData'
+      responses:
+        '201':
+          description: Данные успешно созданы
+          content:
+            application/json:
+              schema:
+                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+        '400':
+          description: Неверный формат запроса
+          content:
+            application/json:
+              schema:
+                $ref: 'ErrorDto.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: 'ErrorDto.yaml#/components/schemas/ErrorResponse'
+
+    delete:
+      tags: [AttendanceData]
+      summary: Удалить все данные посещаемости
+      operationId: deleteAllAttendanceData
+      responses:
+        '204':
+          description: Все данные успешно удалены
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: 'ErrorDto.yaml#/components/schemas/ErrorResponse'
+
+  /attendance-data/{id}:
+    patch:
+      tags: [AttendanceData]
+      summary: Обновить данные посещаемости
+      operationId: updateAttendanceData
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID записи посещаемости
+          schema:
+            type: integer
+            format: int64
+            example: 12345
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceData'
+      responses:
+        '200':
+          description: Данные успешно обновлены
+          content:
+            application/json:
+              schema:
+                $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+        '400':
+          description: Неверный формат запроса
+        '404':
+          description: Запись не найдена
+        '500':
+          description: Внутренняя ошибка сервера
+
+    delete:
+      tags: [AttendanceData]
+      summary: Удалить данные посещаемости по ID
+      operationId: deleteAttendanceDataById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID записи посещаемости
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Данные успешно удалены
+        '404':
+          description: Запись не найдена
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /attendance-data/period:
+    get:
+      tags: [AttendanceData]
+      summary: Получить данные посещаемости за период
+      operationId: getAttendanceDataByPeriod
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+        '400':
+          description: Неверный период
+        '500':
+          description: Внутренняя ошибка сервера
+
+    delete:
+      tags: [AttendanceData]
+      summary: Удалить данные посещаемости за период
+      operationId: deleteAttendanceDataByPeriod
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      responses:
+        '204':
+          description: Данные за период удалены
+        '400':
+          description: Неверный период
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /attendance-data/{employeeId}/period:
+    get:
+      tags: [AttendanceData]
+      summary: Получить данные по сотруднику за период
+      operationId: getEmployeeAttendanceDataByPeriod
+      parameters:
+        - name: employeeId
+          in: path
+          required: true
+          description: ID сотрудника
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+        '400':
+          description: Неверные параметры
+        '404':
+          description: Сотрудник не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+    delete:
+      tags: [AttendanceData]
+      summary: Удалить данные по сотруднику за период
+      operationId: deleteEmployeeAttendanceDataByPeriod
+      parameters:
+        - name: employeeId
+          in: path
+          required: true
+          description: ID сотрудника
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      responses:
+        '204':
+          description: Данные удалены
+        '400':
+          description: Неверные параметры
+        '404':
+          description: Сотрудник не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /attendance-data/{departmentId}/period:
+    get:
+      tags: [AttendanceData]
+      summary: Получить данные по отделу за период
+      operationId: getDepartmentAttendanceDataByPeriod
+      parameters:
+        - name: departmentId
+          in: path
+          required: true
+          description: ID отдела
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'AttendanceDataDto.yaml#/components/schemas/AttendanceDataDto'
+        '400':
+          description: Неверные параметры
+        '404':
+          description: Отдел не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+  # ========== Department Endpoints ==========
+  /department:
+    post:
+      tags: [Department]
+      summary: Создать новый отдел
+      operationId: createDepartment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'DepartmentDto.yaml#/components/schemas/Department'
+      responses:
+        '201':
+          description: Отдел успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: 'DepartmentDto.yaml#/components/schemas/DepartmentDto'
+        '400':
+          description: Неверные данные отдела
+        '500':
+          description: Внутренняя ошибка сервера
+
+    get:
+      tags: [Department]
+      summary: Получить список всех отделов
+      operationId: getAllDepartments
+      responses:
+        '200':
+          description: Список отделов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'DepartmentDto.yaml#/components/schemas/DepartmentDto'
+        '500':
+          description: Внутренняя ошибка сервера
+
+    delete:
+      tags: [Department]
+      summary: Удалить все отделы
+      operationId: deleteAllDepartments
+      responses:
+        '204':
+          description: Все отделы удалены
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /department/{id}:
+    get:
+      tags: [Department]
+      summary: Получить отдел по ID
+      operationId: getDepartmentById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID отдела
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Информация об отделе
+          content:
+            application/json:
+              schema:
+                $ref: 'DepartmentDto.yaml#/components/schemas/DepartmentDto'
+        '404':
+          description: Отдел не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+    patch:
+      tags: [Department]
+      summary: Обновить информацию об отделе
+      operationId: updateDepartment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID отдела
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'DepartmentDto.yaml#/components/schemas/Department'
+      responses:
+        '200':
+          description: Информация обновлена
+          content:
+            application/json:
+              schema:
+                $ref: 'DepartmentDto.yaml#/components/schemas/DepartmentDto'
+        '400':
+          description: Неверные данные
+        '404':
+          description: Отдел не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+    delete:
+      tags: [Department]
+      summary: Удалить отдел по ID
+      operationId: deleteDepartmentById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID отдела
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Отдел удален
+        '404':
+          description: Отдел не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+  # ========== Employee Endpoints ==========
+  /employee:
+    post:
+      tags: [Employee]
+      summary: Добавить нового сотрудника
+      operationId: createEmployee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'EmployeeDto.yaml#/components/schemas/Employee'
+      responses:
+        '201':
+          description: Сотрудник создан
+          content:
+            application/json:
+              schema:
+                $ref: 'EmployeeDto.yaml#/components/schemas/EmployeeDto'
+        '400':
+          description: Неверные данные
+        '500':
+          description: Внутренняя ошибка сервера
+
+    get:
+      tags: [Employee]
+      summary: Получить список всех сотрудников
+      operationId: getAllEmployees
+      responses:
+        '200':
+          description: Список сотрудников
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'EmployeeDto.yaml#/components/schemas/EmployeeDto'
+        '500':
+          description: Внутренняя ошибка сервера
+
+    delete:
+      tags: [Employee]
+      summary: Удалить всех сотрудников
+      operationId: deleteAllEmployees
+      responses:
+        '204':
+          description: Все сотрудники удалены
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /employee/{id}:
+    get:
+      tags: [Employee]
+      summary: Получить сотрудника по ID
+      operationId: getEmployeeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID сотрудника
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Информация о сотруднике
+          content:
+            application/json:
+              schema:
+                $ref: 'EmployeeDto.yaml#/components/schemas/EmployeeDto'
+        '404':
+          description: Сотрудник не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+    patch:
+      tags: [Employee]
+      summary: Обновить информацию о сотруднике
+      operationId: updateEmployee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID сотрудника
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'EmployeeDto.yaml#/components/schemas/Employee'
+      responses:
+        '200':
+          description: Информация обновлена
+          content:
+            application/json:
+              schema:
+                $ref: 'EmployeeDto.yaml#/components/schemas/EmployeeDto'
+        '400':
+          description: Неверные данные
+        '404':
+          description: Сотрудник не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+    delete:
+      tags: [Employee]
+      summary: Удалить сотрудника по ID
+      operationId: deleteEmployeeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID сотрудника
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Сотрудник удален
+        '404':
+          description: Сотрудник не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+  # ========== Work Schedule Endpoints ==========
+  /work-schedules:
+    post:
+      tags: [WorkSchedule]
+      summary: Добавить график работы
+      operationId: createWorkSchedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkSchedule'
+      responses:
+        '201':
+          description: График работы создан
+          content:
+            application/json:
+              schema:
+                $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkScheduleDto'
+        '400':
+          description: Неверные данные
+        '500':
+          description: Внутренняя ошибка сервера

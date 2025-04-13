@@ -13,7 +13,7 @@ public class KpiDto {
     Double personalKpi;
     Double teamKpi;
     Double commonKpi;
-    Integer employeeId;
+    Long employeeId;
     String month;
     String year;
 

@@ -1,54 +1,56 @@
 openapi: 3.0.1
 info:
-  title: Формирование моделей и dto для AES
+  title: API для работы с графиком работы
+  description: Формирование моделей и DTO для системы AES
   version: 1.0.0
 
 paths: { }
 
 components:
   schemas:
-
-    #Models
     WorkSchedule:
       type: object
+      description: Модель графика работы
+      required:
+        - workDay
+        - weekDay
+        - workHour
       properties:
         id:
-          description: id таблицы
-          tyre: integer
+          description: Уникальный идентификатор графика
+          type: integer
           format: int64
+          example: 1
         workDay:
           description: Количество рабочих дней
           type: integer
           format: int32
+          minimum: 0
+          maximum: 7
           example: 5
         weekDay:
           description: Количество выходных дней
           type: integer
           format: int32
+          minimum: 0
+          maximum: 7
           example: 2
         workHour:
           description: Количество рабочих часов в день
           type: integer
           format: int32
+          minimum: 0
+          maximum: 24
           example: 8
 
-    #DTO
     WorkScheduleDto:
-      type: object
-      properties:
-        id:
-          description: id таблицы
-          tyre: integer
-          format: int64
-        workDay:
-          description: Количество рабочих дней
-          type: integer
-          format: int32
-        weekDay:
-          description: Количество выходных дней
-          type: integer
-          format: int32
-        workHour:
-          description: Количество рабочих часов в день
-          type: integer
-          format: int32
+      allOf:
+        - $ref: '#/components/schemas/WorkSchedule'
+        - type: object
+          description: DTO для графика работы
+          properties:
+            id:
+              description: Уникальный идентификатор графика
+              type: integer
+              format: int64
+              example: 1

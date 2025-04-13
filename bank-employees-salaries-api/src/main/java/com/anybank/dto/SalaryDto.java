@@ -12,8 +12,8 @@ import java.util.Objects;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SalaryDto {
     Long id;
-    Integer employeeId;
-    Integer departmentId;
+    Long employeeId;
+    Long departmentId;
     String month;
     String year;
     Double payment;

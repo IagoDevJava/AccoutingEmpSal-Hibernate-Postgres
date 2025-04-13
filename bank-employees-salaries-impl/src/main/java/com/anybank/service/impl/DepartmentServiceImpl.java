@@ -1,11 +1,11 @@
 package com.anybank.service.impl;
 
-import com.anybank.api.model.Department;
-import com.anybank.api.model.DepartmentDto;
 import com.anybank.exception.DepartmentNotFoundException;
 import com.anybank.mapper.DepartmentMapper;
 import com.anybank.repository.DepartmentRepository;
 import com.anybank.service.DepartmentService;
+import com.egorov.model.Department;
+import com.egorov.model.DepartmentDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,12 +17,12 @@ public class DepartmentServiceImpl implements DepartmentService {
   private final DepartmentRepository departmentRepository;
 
   @Override
-  public DepartmentDto addDepartment(Department department) {
+  public DepartmentDto createDepartment(Department department) {
     return DepartmentMapper.toDepartmentDto(departmentRepository.save(department));
   }
 
   @Override
-  public DepartmentDto updateDepartmentById(Long id, Department department) {
+  public DepartmentDto updateDepartment(Long id, Department department) {
     Department departmentById = departmentRepository.findById(id)
         .orElseThrow(() -> new DepartmentNotFoundException("Department not found"));
 
@@ -37,7 +37,7 @@ public class DepartmentServiceImpl implements DepartmentService {
   }
 
   @Override
-  public void deleteDepartments() {
+  public void deleteAllDepartments() {
     departmentRepository.deleteAll();
   }
 
@@ -47,7 +47,7 @@ public class DepartmentServiceImpl implements DepartmentService {
   }
 
   @Override
-  public List<DepartmentDto> getDepartments() {
+  public List<DepartmentDto> getAllDepartments() {
     return DepartmentMapper.toDepartmentDtoList(departmentRepository.findAll());
   }
 

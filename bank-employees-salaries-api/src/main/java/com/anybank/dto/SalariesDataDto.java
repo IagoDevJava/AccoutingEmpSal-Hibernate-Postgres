@@ -11,10 +11,10 @@ import java.util.Objects;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SalariesDataDto {
-    Integer id;
+    Long id;
     Double wage;
     Double bonus;
-    Integer positionId;
+    Long positionId;
 
     @Override
     public boolean equals(Object o) {

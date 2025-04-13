@@ -1,21 +1,25 @@
 openapi: 3.0.1
 info:
-  title: Формирование моделей и dto для AES
+  title: Формирование моделей и DTO для AES
+  description: API для работы с временными периодами
   version: 1.0.0
 
 paths: { }
 
 components:
   schemas:
-
     DateTimePeriod:
       type: object
+      description: Период времени с начальной и конечной датой
+      required: [ begin, end ]
       properties:
         begin:
-          description: Дата начала периода
           type: string
           format: date-time
+          description: Дата и время начала периода
+          example: "2023-01-01T00:00:00Z"
         end:
-          description: Дата окончания периода
           type: string
           format: date-time
+          description: Дата и время окончания периода
+          example: "2023-12-31T23:59:59Z"

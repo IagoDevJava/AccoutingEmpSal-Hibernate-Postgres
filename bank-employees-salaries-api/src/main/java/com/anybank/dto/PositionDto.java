@@ -13,9 +13,9 @@ import java.util.Objects;
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PositionDto {
-    Integer id;
+    Long id;
     String name;
-    Integer departmentId;
+    Long departmentId;
     Integer gradeId;
 
     @Override
