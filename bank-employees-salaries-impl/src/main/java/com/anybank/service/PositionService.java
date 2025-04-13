@@ -1,8 +1,8 @@
 package com.anybank.service;
 
 
-import com.anybank.dto.PositionDto;
-import com.anybank.model.Position;
+import com.egorov.model.Position;
+import com.egorov.model.PositionDto;
 import java.util.List;
 
 public interface PositionService {

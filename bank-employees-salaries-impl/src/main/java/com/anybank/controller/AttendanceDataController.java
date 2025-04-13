@@ -1,6 +1,5 @@
 package com.anybank.controller;
 
-
 import com.anybank.service.AttendanceDataService;
 import com.egorov.api.AttendanceDataApi;
 import com.egorov.model.AttendanceData;
@@ -12,6 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Контроллер для работы с данными о посещаемости сотрудников.
+ * Обеспечивает REST API для создания, получения, обновления и удаления данных о посещаемости.
+ * Реализует интерфейс {@link com.egorov.api.AttendanceDataApi}.
+ */
 @RestController
 @RequiredArgsConstructor
 public class AttendanceDataController implements AttendanceDataApi {
@@ -19,7 +23,10 @@ public class AttendanceDataController implements AttendanceDataApi {
   private final AttendanceDataService attendanceDataService;
 
   /**
-   * Ввести данные за день
+   * Создает новую запись о посещаемости сотрудника за день
+   *
+   * @param data Данные о посещаемости для создания
+   * @return DTO созданной записи о посещаемости с HTTP статусом 200 (OK)
    */
   @Override
   public ResponseEntity<AttendanceDataDto> createAttendanceData(AttendanceData data) {
@@ -27,7 +34,9 @@ public class AttendanceDataController implements AttendanceDataApi {
   }
 
   /**
-   * Удалить все данные
+   * Удаляет все записи о посещаемости
+   *
+   * @return HTTP статус 204 (NO_CONTENT) в случае успешного удаления
    */
   @Override
   public ResponseEntity<Void> deleteAllAttendanceData() {
@@ -36,7 +45,10 @@ public class AttendanceDataController implements AttendanceDataApi {
   }
 
   /**
-   * Удалить данные по идентификатору
+   * Удаляет запись о посещаемости по идентификатору
+   *
+   * @param id Идентификатор записи о посещаемости
+   * @return HTTP статус 204 (NO_CONTENT) в случае успешного удаления
    */
   @Override
   public ResponseEntity<Void> deleteAttendanceDataById(Long id) {
@@ -45,7 +57,10 @@ public class AttendanceDataController implements AttendanceDataApi {
   }
 
   /**
-   * Удалить данные за период
+   * Удаляет записи о посещаемости за указанный период
+   *
+   * @param period Период времени, за который нужно удалить записи
+   * @return HTTP статус 204 (NO_CONTENT) в случае успешного удаления
    */
   @Override
   public ResponseEntity<Void> deleteAttendanceDataByPeriod(DateTimePeriod period) {
@@ -54,7 +69,11 @@ public class AttendanceDataController implements AttendanceDataApi {
   }
 
   /**
-   * Удалить данные за период по сотруднику
+   * Удаляет записи о посещаемости конкретного сотрудника за указанный период
+   *
+   * @param employeeId Идентификатор сотрудника
+   * @param period Период времени, за который нужно удалить записи
+   * @return HTTP статус 204 (NO_CONTENT) в случае успешного удаления
    */
   @Override
   public ResponseEntity<Void> deleteEmployeeAttendanceDataByPeriod(Long employeeId,
@@ -64,7 +83,11 @@ public class AttendanceDataController implements AttendanceDataApi {
   }
 
   /**
-   * получить данные по департаменту за период
+   * Возвращает список записей о посещаемости сотрудников департамента за указанный период
+   *
+   * @param departmentId Идентификатор департамента
+   * @param period Период времени, за который нужно получить записи
+   * @return Список DTO записей о посещаемости с HTTP статусом 200 (OK)
    */
   @Override
   public ResponseEntity<List<AttendanceDataDto>> getDepartmentAttendanceDataByPeriod(
@@ -74,7 +97,10 @@ public class AttendanceDataController implements AttendanceDataApi {
   }
 
   /**
-   * получить данные за период
+   * Возвращает список всех записей о посещаемости за указанный период
+   *
+   * @param period Период времени, за который нужно получить записи
+   * @return Список DTO записей о посещаемости с HTTP статусом 200 (OK)
    */
   @Override
   public ResponseEntity<List<AttendanceDataDto>> getAttendanceDataByPeriod(DateTimePeriod period) {
@@ -82,7 +108,11 @@ public class AttendanceDataController implements AttendanceDataApi {
   }
 
   /**
-   * получить данные по сотруднику за период
+   * Возвращает список записей о посещаемости конкретного сотрудника за указанный период
+   *
+   * @param employeeId Идентификатор сотрудника
+   * @param period Период времени, за который нужно получить записи
+   * @return Список DTO записей о посещаемости с HTTP статусом 200 (OK)
    */
   @Override
   public ResponseEntity<List<AttendanceDataDto>> getEmployeeAttendanceDataByPeriod(
@@ -92,7 +122,11 @@ public class AttendanceDataController implements AttendanceDataApi {
   }
 
   /**
-   * Изменить данные за день
+   * Обновляет существующую запись о посещаемости
+   *
+   * @param id Идентификатор записи о посещаемости для обновления
+   * @param attendanceData Новые данные о посещаемости
+   * @return Обновленное DTO записи о посещаемости с HTTP статусом 200 (OK)
    */
   @Override
   public ResponseEntity<AttendanceDataDto> updateAttendanceData(Long id,

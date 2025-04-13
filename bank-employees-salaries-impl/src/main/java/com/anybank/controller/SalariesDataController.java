@@ -1,80 +1,91 @@
 package com.anybank.controller;
 
-import com.anybank.dto.SalariesDataDto;
-import com.anybank.model.SalariesData;
 import com.anybank.service.SalariesDataService;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AllArgsConstructor;
+import com.egorov.api.SalariesDataApi;
+import com.egorov.model.SalariesData;
+import com.egorov.model.SalariesDataDto;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
-@Transactional(isolation = Isolation.READ_COMMITTED)
+/**
+ * Контроллер для работы с данными о зарплатах.
+ * Обеспечивает REST API для выполнения CRUD операций с данными о зарплатах.
+ * Реализует интерфейс {@link com.egorov.api.SalariesDataApi}.
+ */
 @RestController
-@AllArgsConstructor
-@RequestMapping("/salaries-dates")
-public class SalariesDataController {
-    private final SalariesDataService salariesDataService;
+@RequiredArgsConstructor
+public class SalariesDataController implements SalariesDataApi {
 
-    /**
-     * Добавить данные о зарплате в БД
-     */
-    @Transactional
-    @PostMapping()
-    public ResponseEntity<SalariesDataDto> addSalariesData(@Valid @RequestBody SalariesData salariesData) {
-        return ResponseEntity.ok(salariesDataService.addSalariesData(salariesData));
-    }
+  private final SalariesDataService salariesDataService;
 
-    /**
-     * Заменить данные о зарплате в БД
-     */
-    @Transactional
-    @PatchMapping("/{id}")
-    public ResponseEntity<SalariesDataDto> updateSalariesData(@RequestBody SalariesData salariesData,
-                                                              @PathVariable @PositiveOrZero Long id) {
-        return ResponseEntity.ok(salariesDataService.updateSalariesData(salariesData, id));
-    }
+  /**
+   * Добавляет новые данные о зарплате в базу данных.
+   *
+   * @param salariesData Данные о зарплате для добавления
+   * @return ResponseEntity с DTO добавленных данных о зарплате и HTTP статусом 200 (OK)
+   */
+  @Override
+  public ResponseEntity<SalariesDataDto> addSalariesData(SalariesData salariesData) {
+    return ResponseEntity.ok(salariesDataService.addSalariesData(salariesData));
+  }
 
-    /**
-     * Удалить все данные зарплат из БД
-     */
-    @Transactional
-    @DeleteMapping
-    public ResponseEntity<Void> deleteSalariesData() {
-        salariesDataService.deleteSalariesData();
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+  /**
+   * Обновляет существующие данные о зарплате по указанному ID.
+   *
+   * @param id ID данных о зарплате для обновления
+   * @param salariesData Новые данные о зарплате
+   * @return ResponseEntity с DTO обновленных данных о зарплате и HTTP статусом 200 (OK)
+   */
+  @Override
+  public ResponseEntity<SalariesDataDto> updateSalariesDataById(Long id,
+      SalariesData salariesData) {
+    return ResponseEntity.ok(salariesDataService.updateSalariesData(salariesData, id));
+  }
 
-    /**
-     * Удалить данные зарплаты в БД по id
-     */
-    @Transactional
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSalariesDataById(@PositiveOrZero @PathVariable Long id) {
-        salariesDataService.deleteSalariesDataById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+  /**
+   * Удаляет все данные о зарплатах из базы данных.
+   *
+   * @return ResponseEntity с HTTP статусом 204 (NO_CONTENT)
+   */
+  @Override
+  public ResponseEntity<Void> deleteAllSalariesData() {
+    salariesDataService.deleteSalariesData();
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-    /**
-     * Получить все данные зарплат в БД
-     */
-    @Transactional(readOnly = true)
-    @GetMapping
-    public ResponseEntity<List<SalariesDataDto>> getSalariesData() {
-        return ResponseEntity.ok(salariesDataService.getSalariesData());
-    }
+  /**
+   * Удаляет данные о зарплате по указанному ID.
+   *
+   * @param id ID данных о зарплате для удаления
+   * @return ResponseEntity с HTTP статусом 204 (NO_CONTENT)
+   */
+  @Override
+  public ResponseEntity<Void> deleteSalariesDataById(Long id) {
+    salariesDataService.deleteSalariesDataById(id);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-    /**
-     * Получить данные зарплаты в БД по id
-     */
-    @Transactional(readOnly = true)
-    @GetMapping("/{id}")
-    public ResponseEntity<SalariesDataDto> getSalariesDataById(@PositiveOrZero @PathVariable Long id) {
-        return ResponseEntity.ok(salariesDataService.getSalariesDataById(id));
-    }
+  /**
+   * Получает все данные о зарплатах из базы данных.
+   *
+   * @return ResponseEntity со списком DTO данных о зарплатах и HTTP статусом 200 (OK)
+   */
+  @Override
+  public ResponseEntity<List<SalariesDataDto>> getAllSalariesData() {
+    return ResponseEntity.ok(salariesDataService.getSalariesData());
+  }
+
+  /**
+   * Получает данные о зарплате по указанному ID.
+   *
+   * @param id ID данных о зарплате
+   * @return ResponseEntity с DTO данных о зарплате и HTTP статусом 200 (OK)
+   */
+  @Override
+  public ResponseEntity<SalariesDataDto> getSalariesDataById(Long id) {
+    return ResponseEntity.ok(salariesDataService.getSalariesDataById(id));
+  }
 }

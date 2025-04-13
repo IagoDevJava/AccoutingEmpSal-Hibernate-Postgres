@@ -1,0 +1,52 @@
+openapi: 3.0.3
+info:
+  title: Position API
+  version: 1.0.0
+
+components:
+  schemas:
+    SalariesData:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        wage:
+          type: number
+          format: double
+          example: 1000.50
+        bonus:
+          type: number
+          format: double
+          example: 200.75
+        position:
+          $ref: 'PositionDto.yaml#/components/schemas/Position'
+      required:
+        - wage
+        - bonus
+        - position
+
+    SalariesDataDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        wage:
+          type: number
+          format: double
+          example: 1000.50
+        bonus:
+          type: number
+          format: double
+          example: 200.75
+        positionId:
+          type: integer
+          format: int64
+          example: 1
+      required:
+        - wage
+        - bonus
+        - positionId

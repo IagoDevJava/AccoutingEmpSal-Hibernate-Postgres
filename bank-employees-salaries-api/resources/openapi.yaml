@@ -25,7 +25,7 @@ paths:
   # ========== Attendance Data Endpoints ==========
   /attendance-data:
     post:
-      tags: [AttendanceData]
+      tags: [ AttendanceData ]
       summary: Добавить данные посещаемости за день
       operationId: createAttendanceData
       requestBody:
@@ -55,7 +55,7 @@ paths:
                 $ref: 'ErrorDto.yaml#/components/schemas/ErrorResponse'
 
     delete:
-      tags: [AttendanceData]
+      tags: [ AttendanceData ]
       summary: Удалить все данные посещаемости
       operationId: deleteAllAttendanceData
       responses:
@@ -70,7 +70,7 @@ paths:
 
   /attendance-data/{id}:
     patch:
-      tags: [AttendanceData]
+      tags: [ AttendanceData ]
       summary: Обновить данные посещаемости
       operationId: updateAttendanceData
       parameters:
@@ -103,7 +103,7 @@ paths:
           description: Внутренняя ошибка сервера
 
     delete:
-      tags: [AttendanceData]
+      tags: [ AttendanceData ]
       summary: Удалить данные посещаемости по ID
       operationId: deleteAttendanceDataById
       parameters:
@@ -124,7 +124,7 @@ paths:
 
   /attendance-data/period:
     get:
-      tags: [AttendanceData]
+      tags: [ AttendanceData ]
       summary: Получить данные посещаемости за период
       operationId: getAttendanceDataByPeriod
       requestBody:
@@ -148,7 +148,7 @@ paths:
           description: Внутренняя ошибка сервера
 
     delete:
-      tags: [AttendanceData]
+      tags: [ AttendanceData ]
       summary: Удалить данные посещаемости за период
       operationId: deleteAttendanceDataByPeriod
       requestBody:
@@ -167,7 +167,7 @@ paths:
 
   /attendance-data/{employeeId}/period:
     get:
-      tags: [AttendanceData]
+      tags: [ AttendanceData ]
       summary: Получить данные по сотруднику за период
       operationId: getEmployeeAttendanceDataByPeriod
       parameters:
@@ -201,7 +201,7 @@ paths:
           description: Внутренняя ошибка сервера
 
     delete:
-      tags: [AttendanceData]
+      tags: [ AttendanceData ]
       summary: Удалить данные по сотруднику за период
       operationId: deleteEmployeeAttendanceDataByPeriod
       parameters:
@@ -230,7 +230,7 @@ paths:
 
   /attendance-data/{departmentId}/period:
     get:
-      tags: [AttendanceData]
+      tags: [ AttendanceData ]
       summary: Получить данные по отделу за период
       operationId: getDepartmentAttendanceDataByPeriod
       parameters:
@@ -266,7 +266,7 @@ paths:
   # ========== Department Endpoints ==========
   /department:
     post:
-      tags: [Department]
+      tags: [ Department ]
       summary: Создать новый отдел
       operationId: createDepartment
       requestBody:
@@ -288,7 +288,7 @@ paths:
           description: Внутренняя ошибка сервера
 
     get:
-      tags: [Department]
+      tags: [ Department ]
       summary: Получить список всех отделов
       operationId: getAllDepartments
       responses:
@@ -304,7 +304,7 @@ paths:
           description: Внутренняя ошибка сервера
 
     delete:
-      tags: [Department]
+      tags: [ Department ]
       summary: Удалить все отделы
       operationId: deleteAllDepartments
       responses:
@@ -315,7 +315,7 @@ paths:
 
   /department/{id}:
     get:
-      tags: [Department]
+      tags: [ Department ]
       summary: Получить отдел по ID
       operationId: getDepartmentById
       parameters:
@@ -339,7 +339,7 @@ paths:
           description: Внутренняя ошибка сервера
 
     patch:
-      tags: [Department]
+      tags: [ Department ]
       summary: Обновить информацию об отделе
       operationId: updateDepartment
       parameters:
@@ -371,7 +371,7 @@ paths:
           description: Внутренняя ошибка сервера
 
     delete:
-      tags: [Department]
+      tags: [ Department ]
       summary: Удалить отдел по ID
       operationId: deleteDepartmentById
       parameters:
@@ -393,7 +393,7 @@ paths:
   # ========== Employee Endpoints ==========
   /employee:
     post:
-      tags: [Employee]
+      tags: [ Employee ]
       summary: Добавить нового сотрудника
       operationId: createEmployee
       requestBody:
@@ -415,7 +415,7 @@ paths:
           description: Внутренняя ошибка сервера
 
     get:
-      tags: [Employee]
+      tags: [ Employee ]
       summary: Получить список всех сотрудников
       operationId: getAllEmployees
       responses:
@@ -431,7 +431,7 @@ paths:
           description: Внутренняя ошибка сервера
 
     delete:
-      tags: [Employee]
+      tags: [ Employee ]
       summary: Удалить всех сотрудников
       operationId: deleteAllEmployees
       responses:
@@ -442,7 +442,7 @@ paths:
 
   /employee/{id}:
     get:
-      tags: [Employee]
+      tags: [ Employee ]
       summary: Получить сотрудника по ID
       operationId: getEmployeeById
       parameters:
@@ -466,7 +466,7 @@ paths:
           description: Внутренняя ошибка сервера
 
     patch:
-      tags: [Employee]
+      tags: [ Employee ]
       summary: Обновить информацию о сотруднике
       operationId: updateEmployee
       parameters:
@@ -498,7 +498,7 @@ paths:
           description: Внутренняя ошибка сервера
 
     delete:
-      tags: [Employee]
+      tags: [ Employee ]
       summary: Удалить сотрудника по ID
       operationId: deleteEmployeeById
       parameters:
@@ -517,12 +517,717 @@ paths:
         '500':
           description: Внутренняя ошибка сервера
 
+  # ========== Grade Endpoints ==========
+  /grade:
+    post:
+      tags: [ Grade ]
+      summary: Добавление нового грейда
+      operationId: createGrade
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'GradeDto.yaml#/components/schemas/Grade'
+      responses:
+        '201':
+          description: Грейд создан
+          content:
+            application/json:
+              schema:
+                $ref: 'GradeDto.yaml#/components/schemas/GradeDto'
+        '400':
+          description: Неверные данные
+        '500':
+          description: Внутренняя ошибка сервера
+
+    get:
+      tags: [ Grade ]
+      summary: Получить список всех грейдов
+      operationId: getAllGrades
+      responses:
+        '200':
+          description: Список грейдов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'GradeDto.yaml#/components/schemas/GradeDto'
+        '500':
+          description: Внутренняя ошибка сервера
+
+    delete:
+      tags: [ Grade ]
+      summary: Удалить все грейды
+      operationId: deleteAllGrades
+      responses:
+        '204':
+          description: Все грейды удалены
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /grade/{id}:
+    get:
+      tags: [ Grade ]
+      summary: Получить грейд по ID
+      operationId: getGradeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID грейда
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Информация о грейде
+          content:
+            application/json:
+              schema:
+                $ref: 'GradeDto.yaml#/components/schemas/GradeDto'
+        '404':
+          description: Грейд не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+    patch:
+      tags: [ Grade ]
+      summary: Обновить информацию о грейде
+      operationId: updateGrade
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID грейда
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'GradeDto.yaml#/components/schemas/Grade'
+      responses:
+        '200':
+          description: Информация обновлена
+          content:
+            application/json:
+              schema:
+                $ref: 'GradeDto.yaml#/components/schemas/GradeDto'
+        '400':
+          description: Неверные данные
+        '404':
+          description: Грейд не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+    delete:
+      tags: [ Grade ]
+      summary: Удалить грейд по ID
+      operationId: deleteGradeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID сотрудника
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Грейд удален
+        '404':
+          description: Сотрудник не найден
+        '500':
+          description: Внутренняя ошибка сервера
+
+  # ========== Kpis Endpoints ==========
+  /kpis:
+    post:
+      operationId: addKpi
+      summary: Добавление нового KPI
+      description: Создает новый показатель KPI в системе
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'KpiDto.yaml#/components/schemas/Kpi'
+      responses:
+        '200':
+          description: KPI успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: 'KpiDto.yaml#/components/schemas/KpiDto'
+        '400':
+          description: Неверные входные данные
+        '500':
+          description: Внутренняя ошибка сервера
+      tags:
+        - KPI
+
+    get:
+      operationId: getKpis
+      summary: Получение списка всех KPI
+      description: Возвращает список всех показателей KPI из системы
+      responses:
+        '200':
+          description: Список KPI успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'KpiDto.yaml#/components/schemas/KpiDto'
+        '500':
+          description: Внутренняя ошибка сервера
+      tags:
+        - KPI
+
+    delete:
+      operationId: deleteKpis
+      summary: Удаление всех KPI
+      description: Удаляет все показатели KPI из системы
+      responses:
+        '204':
+          description: Все KPI успешно удалены
+        '500':
+          description: Внутренняя ошибка сервера
+      tags:
+        - KPI
+
+  /kpis/{id}:
+    get:
+      operationId: getKpiById
+      summary: Получение KPI по ID
+      description: Возвращает показатель KPI по указанному идентификатору
+      parameters:
+        - name: id
+          in: path
+          description: ID KPI
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+      responses:
+        '200':
+          description: KPI успешно получен
+          content:
+            application/json:
+              schema:
+                $ref: 'KpiDto.yaml#/components/schemas/KpiDto'
+        '404':
+          description: KPI не найден
+        '400':
+          description: Неверный ID (отрицательное число)
+        '500':
+          description: Внутренняя ошибка сервера
+      tags:
+        - KPI
+
+    patch:
+      operationId: updateKpi
+      summary: Обновление KPI
+      description: Обновляет существующий показатель KPI
+      parameters:
+        - name: id
+          in: path
+          description: ID KPI для обновления
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'KpiDto.yaml#/components/schemas/Kpi'
+      responses:
+        '200':
+          description: KPI успешно обновлен
+          content:
+            application/json:
+              schema:
+                $ref: 'KpiDto.yaml#/components/schemas/KpiDto'
+        '400':
+          description: Неверные входные данные
+        '404':
+          description: KPI не найден
+        '500':
+          description: Внутренняя ошибка сервера
+      tags:
+        - KPI
+
+    delete:
+      operationId: deleteKpiById
+      summary: Удаление KPI по ID
+      description: Удаляет показатель KPI по указанному идентификатору
+      parameters:
+        - name: id
+          in: path
+          description: ID KPI для удаления
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+      responses:
+        '204':
+          description: KPI успешно удален
+        '400':
+          description: Неверный ID (отрицательное число)
+        '404':
+          description: KPI не найден
+        '500':
+          description: Внутренняя ошибка сервера
+      tags:
+        - KPI
+
+  # ========== Position Endpoints ==========
+  /positions:
+    post:
+      operationId: addPosition
+      tags:
+        - Positions
+      summary: Добавление новой должности
+      description: Создает новую должность в системе
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'PositionDto.yaml#/components/schemas/Position'
+      responses:
+        '200':
+          description: Успешное создание должности
+          content:
+            application/json:
+              schema:
+                $ref: 'PositionDto.yaml#/components/schemas/PositionDto'
+        '400':
+          description: Неверные входные данные
+        '500':
+          description: Внутренняя ошибка сервера
+
+    get:
+      operationId: getPositions
+      tags:
+        - Positions
+      summary: Получение списка всех должностей
+      description: Возвращает список всех должностей в системе
+      responses:
+        '200':
+          description: Успешное получение списка должностей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'PositionDto.yaml#/components/schemas/PositionDto'
+        '500':
+          description: Внутренняя ошибка сервера
+
+    delete:
+      operationId: deleteAllPositions
+      tags:
+        - Positions
+      summary: Удаление всех должностей
+      description: Удаляет все должности из системы
+      responses:
+        '204':
+          description: Все должности успешно удалены
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /positions/{id}:
+    patch:
+      operationId: updatePosition
+      tags:
+        - Positions
+      summary: Обновление должности
+      description: Обновляет информацию о должности по ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'PositionDto.yaml#/components/schemas/Position'
+      responses:
+        '200':
+          description: Успешное обновление должности
+          content:
+            application/json:
+              schema:
+                $ref: 'PositionDto.yaml#/components/schemas/PositionDto'
+        '400':
+          description: Неверные входные данные
+        '404':
+          description: Должность не найдена
+        '500':
+          description: Внутренняя ошибка сервера
+
+    delete:
+      operationId: deletePositionById
+      tags:
+        - Positions
+      summary: Удаление должности по ID
+      description: Удаляет должность по указанному ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+      responses:
+        '204':
+          description: Должность успешно удалена
+        '404':
+          description: Должность не найдена
+        '500':
+          description: Внутренняя ошибка сервера
+
+    get:
+      operationId: getPositionById
+      tags:
+        - Positions
+      summary: Получение должности по ID
+      description: Возвращает информацию о должности по указанному ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+      responses:
+        '200':
+          description: Успешное получение должности
+          content:
+            application/json:
+              schema:
+                $ref: 'PositionDto.yaml#/components/schemas/PositionDto'
+        '404':
+          description: Должность не найдена
+        '500':
+          description: Внутренняя ошибка сервера
+
+  # ========== Salary Endpoints ==========
+  /salaries:
+    post:
+      operationId: addSalary
+      tags:
+        - Salaries
+      summary: Сохранить данные о зарплате
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'SalaryDto.yaml#/components/schemas/Salary'
+      responses:
+        '200':
+          description: Данные о зарплате успешно сохранены
+          content:
+            application/json:
+              schema:
+                $ref: 'SalaryDto.yaml#/components/schemas/SalaryDto'
+
+    delete:
+      operationId: deleteAllSalaries
+      tags:
+        - Salaries
+      summary: Удаление всех зарплат
+      responses:
+        '204':
+          description: Все данные о зарплатах успешно удалены
+
+  /salaries/period:
+    get:
+      operationId: getCompanySalariesByPeriod
+      tags:
+        - Salaries
+      summary: Получить данные о зарплатах по компании за месяц
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      responses:
+        '200':
+          description: Список зарплат по компании за указанный месяц
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'SalaryDto.yaml#/components/schemas/SalaryDto'
+
+  /salaries/{id}:
+    patch:
+      operationId: updateSalary
+      tags:
+        - Salaries
+      summary: Обновить данные о зарплате
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+          description: ID записи о зарплате
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'SalaryDto.yaml#/components/schemas/Salary'
+      responses:
+        '200':
+          description: Данные о зарплате успешно обновлены
+          content:
+            application/json:
+              schema:
+                $ref: 'SalaryDto.yaml#/components/schemas/SalaryDto'
+
+    delete:
+      operationId: deleteSalaryById
+      tags:
+        - Salaries
+      summary: Удалить данные о зарплате по ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+          description: ID записи о зарплате
+      responses:
+        '204':
+          description: Данные о зарплате успешно удалены
+
+    get:
+      operationId: getSalaryById
+      tags:
+        - Salaries
+      summary: Получить данные о зарплате по ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+          description: ID записи о зарплате
+      responses:
+        '200':
+          description: Данные о зарплате успешно получены
+          content:
+            application/json:
+              schema:
+                $ref: 'SalaryDto.yaml#/components/schemas/SalaryDto'
+
+  /salaries/calculate/{employeeId}/period:
+    get:
+      operationId: getEmployeeSalaryByPeriod
+      tags:
+        - Salaries
+      summary: Получить зарплату сотрудника за период
+      parameters:
+        - name: employeeId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+          description: ID сотрудника
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      responses:
+        '200':
+          description: Данные о зарплате сотрудника за месяц успешно получены
+          content:
+            application/json:
+              schema:
+                $ref: 'SalaryDto.yaml#/components/schemas/SalaryDto'
+
+  /salaries/calculate/{departmentId}/period:
+    get:
+      operationId: getDepartmentSalariesByPeriod
+      tags:
+        - Salaries
+      summary: Получить зарплаты отдела за период
+      parameters:
+        - name: departmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+          description: ID отдела
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      responses:
+        '200':
+          description: Список зарплат отдела за указанный месяц успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'SalaryDto.yaml#/components/schemas/SalaryDto'
+
+  # ========== Salaries Data Endpoints ==========
+  /salaries-dates:
+    post:
+      tags:
+        - SalariesData
+      summary: Добавить данные о зарплате в БД
+      operationId: addSalariesData
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'SalariesDataDto.yaml#/components/schemas/SalariesData'
+      responses:
+        '200':
+          description: Данные о зарплате успешно добавлены
+          content:
+            application/json:
+              schema:
+                $ref: 'SalariesDataDto.yaml#/components/schemas/SalariesDataDto'
+
+    delete:
+      tags:
+        - SalariesData
+      summary: Удалить все данные зарплат из БД
+      operationId: deleteAllSalariesData
+      responses:
+        '204':
+          description: Все данные о зарплатах успешно удалены
+
+    get:
+      tags:
+        - SalariesData
+      summary: Получить все данные зарплат в БД
+      operationId: getAllSalariesData
+      responses:
+        '200':
+          description: Список всех данных о зарплатах
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'SalariesDataDto.yaml#/components/schemas/SalariesDataDto'
+
+  /salaries-dates/{id}:
+    patch:
+      tags:
+        - SalariesData
+      summary: Заменить данные о зарплате в БД
+      operationId: updateSalariesDataById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'SalariesDataDto.yaml#/components/schemas/SalariesData'
+      responses:
+        '200':
+          description: Данные о зарплате успешно обновлены
+          content:
+            application/json:
+              schema:
+                $ref: 'SalariesDataDto.yaml#/components/schemas/SalariesDataDto'
+
+    delete:
+      tags:
+        - SalariesData
+      summary: Удалить данные зарплаты в БД по id
+      operationId: deleteSalariesDataById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+      responses:
+        '204':
+          description: Данные о зарплате успешно удалены
+
+    get:
+      tags:
+        - SalariesData
+      summary: Получить данные зарплаты в БД по id
+      operationId: getSalariesDataById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+      responses:
+        '200':
+          description: Данные о зарплате
+          content:
+            application/json:
+              schema:
+                $ref: 'SalariesDataDto.yaml#/components/schemas/SalariesDataDto'
+
   # ========== Work Schedule Endpoints ==========
   /work-schedules:
     post:
-      tags: [WorkSchedule]
-      summary: Добавить график работы
-      operationId: createWorkSchedule
+      tags:
+        - WorkSchedule
+      summary: Добавить график в БД
+      operationId: addSchedule
       requestBody:
         required: true
         content:
@@ -530,13 +1235,99 @@ paths:
             schema:
               $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkSchedule'
       responses:
-        '201':
-          description: График работы создан
+        '200':
+          description: График успешно добавлен
           content:
             application/json:
               schema:
                 $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkScheduleDto'
-        '400':
-          description: Неверные данные
-        '500':
-          description: Внутренняя ошибка сервера
+
+    get:
+      tags:
+        - WorkSchedule
+      summary: Получить все графики в БД
+      operationId: getSchedules
+      responses:
+        '200':
+          description: Список графиков работы
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkScheduleDto'
+
+    delete:
+      tags:
+        - WorkSchedule
+      summary: Удалить все графики из БД
+      operationId: deleteSchedules
+      responses:
+        '204':
+          description: Графики успешно удалены
+
+  /work-schedules/{scheduleId}:
+    patch:
+      tags:
+        - Work Schedule
+      summary: Изменить график в БД
+      operationId: updateSchedule
+      parameters:
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkSchedule'
+      responses:
+        '200':
+          description: График успешно обновлен
+          content:
+            application/json:
+              schema:
+                $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkScheduleDto'
+
+    delete:
+      tags:
+        - WorkSchedule
+      summary: Удалить график в БД по id
+      operationId: deleteScheduleById
+      parameters:
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+      responses:
+        '204':
+          description: График успешно удален
+
+    get:
+      tags:
+        - Work Schedule
+      summary: Получить график в БД по id
+      operationId: getScheduleById
+      parameters:
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+      responses:
+        '200':
+          description: График работы
+          content:
+            application/json:
+              schema:
+                $ref: 'WorkScheduleDto.yaml#/components/schemas/WorkScheduleDto'

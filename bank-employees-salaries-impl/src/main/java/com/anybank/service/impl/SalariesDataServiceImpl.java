@@ -1,75 +1,57 @@
 package com.anybank.service.impl;
 
-import com.anybank.dto.SalariesDataDto;
 import com.anybank.exception.SalariesDataNotFoundException;
 import com.anybank.mapper.SalariesDataMapper;
-import com.anybank.model.SalariesData;
 import com.anybank.repository.SalariesDateRepository;
 import com.anybank.service.SalariesDataService;
+import com.egorov.model.SalariesData;
+import com.egorov.model.SalariesDataDto;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class SalariesDataServiceImpl implements SalariesDataService {
-    private final SalariesDateRepository salariesDateRepository;
 
-    /**
-     * Добавить данные о зарплате в БД
-     */
-    @Override
-    public SalariesDataDto addSalariesData(SalariesData salariesData) {
-        return SalariesDataMapper.toSalariesDataDto(salariesDateRepository.save(salariesData));
-    }
+  private final SalariesDateRepository salariesDateRepository;
 
-    /**
-     * Заменить данные о зарплате в БД
-     */
-    @Override
-    public SalariesDataDto updateSalariesData(SalariesData salariesData, Long id) {
-        SalariesData salariesDataById = salariesDateRepository.findById(id)
-                .orElseThrow(() -> new SalariesDataNotFoundException("SalariesData not found"));
+  @Override
+  public SalariesDataDto addSalariesData(SalariesData salariesData) {
+    return SalariesDataMapper.toSalariesDataDto(salariesDateRepository.save(salariesData));
+  }
 
-        salariesDataById.setId(id);
-        salariesDataById.setWage(salariesData.getWage());
-        salariesDataById.setBonus(salariesData.getBonus());
-        salariesDataById.setPosition(salariesData.getPosition());
+  @Override
+  public SalariesDataDto updateSalariesData(SalariesData salariesData, Long id) {
+    SalariesData salariesDataById = salariesDateRepository.findById(id)
+        .orElseThrow(() -> new SalariesDataNotFoundException("SalariesData not found"));
 
-        return SalariesDataMapper.toSalariesDataDto(salariesDateRepository.save(salariesDataById));
-    }
+    salariesDataById.setId(id);
+    salariesDataById.setWage(salariesData.getWage());
+    salariesDataById.setBonus(salariesData.getBonus());
+    salariesDataById.setPosition(salariesData.getPosition());
 
-    /**
-     * Удалить все данные зарплат из БД
-     */
-    @Override
-    public void deleteSalariesData() {
-        salariesDateRepository.deleteAll();
-    }
+    return SalariesDataMapper.toSalariesDataDto(salariesDateRepository.save(salariesDataById));
+  }
 
-    /**
-     * Удалить данные зарплаты в БД по id
-     */
-    @Override
-    public void deleteSalariesDataById(Long id) {
-        salariesDateRepository.deleteById(id);
-    }
+  @Override
+  public void deleteSalariesData() {
+    salariesDateRepository.deleteAll();
+  }
 
-    /**
-     * Получить все данные зарплат в БД
-     */
-    @Override
-    public List<SalariesDataDto> getSalariesData() {
-        return SalariesDataMapper.toGSalariesDataDtoList(salariesDateRepository.findAll());
-    }
+  @Override
+  public void deleteSalariesDataById(Long id) {
+    salariesDateRepository.deleteById(id);
+  }
 
-    /**
-     * Получить данные зарплаты в БД по id
-     */
-    @Override
-    public SalariesDataDto getSalariesDataById(Long id) {
-        return SalariesDataMapper.toSalariesDataDto(salariesDateRepository.findById(id)
-                .orElseThrow(() -> new SalariesDataNotFoundException("SalariesData not found")));
-    }
+  @Override
+  public List<SalariesDataDto> getSalariesData() {
+    return SalariesDataMapper.toGSalariesDataDtoList(salariesDateRepository.findAll());
+  }
+
+  @Override
+  public SalariesDataDto getSalariesDataById(Long id) {
+    return SalariesDataMapper.toSalariesDataDto(salariesDateRepository.findById(id)
+        .orElseThrow(() -> new SalariesDataNotFoundException("SalariesData not found")));
+  }
 }

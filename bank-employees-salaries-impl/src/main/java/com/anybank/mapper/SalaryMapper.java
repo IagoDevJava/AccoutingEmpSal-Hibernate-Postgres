@@ -1,7 +1,7 @@
 package com.anybank.mapper;
 
-import com.anybank.dto.SalaryDto;
-import com.anybank.model.Salary;
+import com.egorov.model.Salary;
+import com.egorov.model.SalaryDto;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,14 +9,11 @@ public class SalaryMapper {
 
   //Salary to SalaryDto
   public static SalaryDto toSalaryDto(Salary salary) {
-    return SalaryDto.builder()
+    return new SalaryDto()
         .id(salary.getId())
         .employeeId(salary.getEmployee().getId())
         .departmentId(salary.getDepartment().getId())
-        .month(salary.getMonth())
-        .year(salary.getYear())
-        .payment(salary.getPayment())
-        .build();
+        .period(salary.getPeriod());
   }
 
   //SalaryList to SalaryDtoList

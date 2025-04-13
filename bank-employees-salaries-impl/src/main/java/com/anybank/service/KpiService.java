@@ -1,39 +1,39 @@
 package com.anybank.service;
 
 
-import com.anybank.dto.KpiDto;
-import com.anybank.model.Kpi;
-
+import com.egorov.model.Kpi;
+import com.egorov.model.KpiDto;
 import java.util.List;
 
 public interface KpiService {
-    /**
-     * Добавление kpi в БД
-     */
-    KpiDto addKpi(Kpi kpi);
 
-    /**
-     * Обновление kpi в БД
-     */
-    KpiDto updateKpi(Kpi kpi, Long id);
+  /**
+   * Добавление kpi в БД
+   */
+  KpiDto addKpi(Kpi kpi);
 
-    /**
-     * Удаление всех kpi из БД
-     */
-    void deleteKpis();
+  /**
+   * Обновление kpi в БД
+   */
+  KpiDto updateKpi(Kpi kpi, Long id);
 
-    /**
-     * Удаление kpi по id из БД
-     */
-    void deleteKpiById(Long id);
+  /**
+   * Удаление всех kpi из БД
+   */
+  void deleteKpis();
 
-    /**
-     * Получение списка kpi из БД
-     */
-    List<KpiDto> getKpis();
+  /**
+   * Удаление kpi по id из БД
+   */
+  void deleteKpiById(Long id);
 
-    /**
-     * Получение kpi по id
-     */
-    KpiDto getKpiById(Long id);
+  /**
+   * Получение списка kpi из БД
+   */
+  List<KpiDto> getKpis();
+
+  /**
+   * Получение kpi по id
+   */
+  KpiDto getKpiById(Long id);
 }

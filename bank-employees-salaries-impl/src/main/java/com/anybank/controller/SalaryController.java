@@ -1,187 +1,125 @@
 package com.anybank.controller;
 
-import com.anybank.dto.SalaryDto;
-import com.anybank.model.Salary;
 import com.anybank.service.SalaryService;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import java.time.LocalDate;
+import com.egorov.api.SalariesApi;
+import com.egorov.model.DateTimePeriod;
+import com.egorov.model.Salary;
+import com.egorov.model.SalaryDto;
 import java.util.List;
-import java.util.Objects;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Transactional(isolation = Isolation.READ_COMMITTED)
+/**
+ * Контроллер для работы с зарплатами сотрудников. Обеспечивает REST API для добавления, обновления,
+ * удаления и получения информации о зарплатах. Реализует интерфейс {@link SalariesApi} и использует
+ * сервис {@link SalaryService} для выполнения бизнес-логики.
+ *
+ * <p>Все методы возвращают {@link ResponseEntity} с соответствующим HTTP статусом
+ * и данными в теле ответа (если применимо).</p>
+ *
+ * @see SalariesApi
+ * @see SalaryService
+ * @see Salary
+ * @see SalaryDto
+ */
 @RestController
-@AllArgsConstructor
-@RequestMapping("/salaries")
-public class SalaryController {
+@RequiredArgsConstructor
+public class SalaryController implements SalariesApi {
 
   private final SalaryService salaryService;
 
   /**
-   * Сохранить данные о зарплате
+   * Добавляет новую запись о зарплате
+   *
+   * @param salary данные зарплаты для добавления
+   * @return {@link ResponseEntity} с {@link SalaryDto} и HTTP статусом 200 (OK)
    */
-  @Transactional
-  @PostMapping()
-  public ResponseEntity<SalaryDto> addSalary(@RequestBody @Valid Salary salary) {
+  public ResponseEntity<SalaryDto> addSalary(Salary salary) {
     return ResponseEntity.ok(salaryService.addSalary(salary));
   }
 
   /**
-   * Обновление данные о зарплате
+   * Удаляет все записи о зарплатах
+   *
+   * @return {@link ResponseEntity} с HTTP статусом 204 (NO_CONTENT)
    */
-  @Transactional
-  @PatchMapping("/{id}")
-  public ResponseEntity<SalaryDto> updateSalary(@RequestBody Salary salary,
-      @PathVariable @PositiveOrZero Long id) {
-    return ResponseEntity.ok(salaryService.updateSalary(salary, id));
-  }
-
-  /**
-   * Рассчитать данные о зарплате по сотруднику за месяц
-   */
-  @Transactional
-  @GetMapping("/calculate/{employeeId}")
-  public ResponseEntity<Salary> calculateSalaryByMonthForEmployee(
-      @PathVariable @PositiveOrZero Long employeeId,
-      @RequestParam(required = false) String month,
-      @RequestParam(required = false) String year,
-      @RequestParam @PositiveOrZero @NotNull Integer countWorkDays,
-      @RequestParam @PositiveOrZero @NotNull Integer countMedDays) {
-    return ResponseEntity.ok(salaryService.calculateSalaryByMonthForEmployee(
-        employeeId,
-        Objects.requireNonNullElse(month, String.valueOf(LocalDate.now().getMonth())),
-        Objects.requireNonNullElse(year, String.valueOf(LocalDate.now().getYear())),
-        countWorkDays,
-        countMedDays)
-    );
-  }
-
-  /**
-   * Удаление всех зарплат
-   */
-  @Transactional
-  @DeleteMapping
-  public ResponseEntity<Void> deleteSalary() {
-    salaryService.deleteSalary();
+  @Override
+  public ResponseEntity<Void> deleteAllSalaries() {
+    salaryService.deleteAllSalaries();
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /**
-   * Удаление зарплат по id из БД
+   * Удаляет запись о зарплате по идентификатору
+   *
+   * @param id идентификатор зарплаты для удаления
+   * @return {@link ResponseEntity} с HTTP статусом 204 (NO_CONTENT)
    */
-  @Transactional
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteSalaryById(@PositiveOrZero @PathVariable Long id) {
+  @Override
+  public ResponseEntity<Void> deleteSalaryById(Long id) {
     salaryService.deleteSalaryById(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /**
-   * получить данные о зарплате по id
+   * Получает зарплаты всех сотрудников компании за указанный период
+   *
+   * @param dateTimePeriod период времени для фильтрации
+   * @return {@link ResponseEntity} со списком {@link SalaryDto} и HTTP статусом 200 (OK)
    */
-  @Transactional(readOnly = true)
-  @GetMapping("/{id}")
-  public ResponseEntity<SalaryDto> getSalaryById(@PositiveOrZero @PathVariable Long id) {
+  @Override
+  public ResponseEntity<List<SalaryDto>> getCompanySalariesByPeriod(DateTimePeriod dateTimePeriod) {
+    return ResponseEntity.ok(salaryService.getCompanySalariesByPeriod(dateTimePeriod));
+  }
+
+  /**
+   * Получает зарплаты сотрудников отдела за указанный период
+   *
+   * @param departmentId   идентификатор отдела
+   * @param dateTimePeriod период времени для фильтрации
+   * @return {@link ResponseEntity} со списком {@link SalaryDto} и HTTP статусом 200 (OK)
+   */
+  @Override
+  public ResponseEntity<List<SalaryDto>> getDepartmentSalariesByPeriod(Long departmentId,
+      DateTimePeriod dateTimePeriod) {
+    return ResponseEntity.ok(
+        salaryService.getDepartmentSalariesByPeriod(departmentId, dateTimePeriod));
+  }
+
+  /**
+   * Получает зарплату сотрудника за указанный период
+   *
+   * @param employeeId     идентификатор сотрудника
+   * @param dateTimePeriod период времени для фильтрации
+   * @return {@link ResponseEntity} с {@link SalaryDto} и HTTP статусом 200 (OK)
+   */
+  @Override
+  public ResponseEntity<SalaryDto> getEmployeeSalaryByPeriod(Long employeeId,
+      DateTimePeriod dateTimePeriod) {
+    return ResponseEntity.ok(salaryService.getEmployeeSalaryByPeriod(employeeId, dateTimePeriod));
+  }
+
+  /**
+   * Получает запись о зарплате по идентификатору
+   *
+   * @param id идентификатор зарплаты
+   * @return {@link ResponseEntity} с {@link SalaryDto} и HTTP статусом 200 (OK)
+   */
+  public ResponseEntity<SalaryDto> getSalaryById(Long id) {
     return ResponseEntity.ok(salaryService.getSalaryById(id));
   }
 
   /**
-   * получить данные о зарплате по сотруднику за месяц
+   * Обновляет запись о зарплате
+   *
+   * @param id     идентификатор зарплаты для обновления
+   * @param salary новые данные зарплаты
+   * @return {@link ResponseEntity} с обновлённым {@link SalaryDto} и HTTP статусом 200 (OK)
    */
-  @Transactional(readOnly = true)
-  @GetMapping("/{employeeId}/month")
-  public ResponseEntity<SalaryDto> getSalaryByMonthForEmployee(
-      @PositiveOrZero @PathVariable Long employeeId,
-      @RequestParam(required = false) String month,
-      @RequestParam(required = false) String year) {
-    return ResponseEntity.ok(salaryService.getSalaryByMonthForEmployee(
-        employeeId,
-        Objects.requireNonNullElse(month, String.valueOf(LocalDate.now().getMonth())),
-        Objects.requireNonNullElse(year, String.valueOf(LocalDate.now().getYear()))));
-  }
-
-  /**
-   * получить данные о зарплате по сотруднику за год
-   */
-  @Transactional(readOnly = true)
-  @GetMapping("/{employeeId}/year")
-  public ResponseEntity<List<SalaryDto>> getSalaryByYearForEmployee(
-      @PositiveOrZero @PathVariable Long employeeId,
-      @RequestParam(required = false) String year) {
-    return ResponseEntity.ok(salaryService.getSalaryByYearForEmployee(
-        employeeId,
-        Objects.requireNonNullElse(year, String.valueOf(LocalDate.now().getYear())))
-    );
-  }
-
-  /**
-   * получить данные о зарплате по отделу за месяц
-   */
-  @Transactional(readOnly = true)
-  @GetMapping("/{departmentId}/month")
-  public ResponseEntity<List<SalaryDto>> getSalaryByMonthForDepartment(
-      @PositiveOrZero @PathVariable Long departmentId,
-      @RequestParam(required = false) String month,
-      @RequestParam(required = false) String year) {
-    return ResponseEntity.ok(salaryService.getSalaryByMonthForDepartment(
-        departmentId,
-        Objects.requireNonNullElse(month, String.valueOf(LocalDate.now().getMonth())),
-        Objects.requireNonNullElse(year, String.valueOf(LocalDate.now().getYear()))));
-  }
-
-  /**
-   * получить данные о зарплате по отделу за год
-   */
-  @Transactional(readOnly = true)
-  @GetMapping("/{departmentId}/year")
-  public ResponseEntity<List<SalaryDto>> getSalaryByYearForDepartment(
-      @PositiveOrZero @PathVariable Long departmentId,
-      @RequestParam(required = false) String year) {
-    return ResponseEntity.ok(salaryService.getSalaryByYearForDepartment(departmentId,
-        Objects.requireNonNullElse(year, String.valueOf(LocalDate.now().getYear())))
-    );
-  }
-
-  /**
-   * получить данные о зарплате по компании за месяц
-   */
-  @Transactional(readOnly = true)
-  @GetMapping("/month")
-  public ResponseEntity<List<SalaryDto>> getSalaryByMonth(
-      @RequestParam(required = false) String month,
-      @RequestParam(required = false) String year) {
-    return ResponseEntity.ok(salaryService.getSalaryByMonth(
-        Objects.requireNonNullElse(month, String.valueOf(LocalDate.now().getMonth())),
-        Objects.requireNonNullElse(year, String.valueOf(LocalDate.now().getYear())))
-    );
-  }
-
-  /**
-   * получить данные о зарплате по компании за год
-   */
-  @Transactional(readOnly = true)
-  @GetMapping("/year")
-  public ResponseEntity<List<SalaryDto>> getSalaryByYear(
-      @RequestParam(required = false) String year) {
-    return ResponseEntity.ok(
-        salaryService.getSalaryByYear(Objects.requireNonNullElse(
-            year, String.valueOf(LocalDate.now().getYear()))
-        )
-    );
+  @Override
+  public ResponseEntity<SalaryDto> updateSalary(Long id, Salary salary) {
+    return ResponseEntity.ok(salaryService.updateSalary(salary, id));
   }
 }

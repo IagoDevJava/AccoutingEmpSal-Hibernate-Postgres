@@ -1,6 +1,6 @@
 package com.anybank.repository;
 
-import com.anybank.model.SalariesData;
+import com.egorov.model.SalariesData;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

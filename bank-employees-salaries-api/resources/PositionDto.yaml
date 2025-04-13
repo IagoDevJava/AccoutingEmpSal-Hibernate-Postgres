@@ -1,0 +1,52 @@
+openapi: 3.0.3
+info:
+  title: Position API
+  version: 1.0.0
+
+components:
+  schemas:
+    PositionDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+          description: ID должности
+        name:
+          type: string
+          example: "Senior Developer"
+          description: Название должности
+        departmentId:
+          type: integer
+          format: int64
+          example: 5
+          description: ID департамента
+        gradeId:
+          type: integer
+          format: int64
+          example: 10
+          description: ID грейда
+      required:
+        - name
+        - departmentId
+
+    Position:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+          description: ID должности
+        name:
+          type: string
+          example: "Senior Developer"
+          description: Название должности
+        department:
+          $ref: 'DepartmentDto.yaml#/components/schemas/Department'
+        grade:
+          $ref: 'GradeDto.yaml#/components/schemas/Grade'
+      required:
+        - name
+        - department

@@ -1,72 +1,56 @@
 package com.anybank.service.impl;
 
-import com.anybank.dto.GradeDto;
 import com.anybank.exception.GradeNotFoundException;
 import com.anybank.mapper.GradeMapper;
-import com.anybank.model.Grade;
 import com.anybank.repository.GradeRepository;
 import com.anybank.service.GradeService;
+import com.egorov.model.Grade;
+import com.egorov.model.GradeDto;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class GradeServiceImpl implements GradeService {
-    private final GradeRepository gradeRepository;
 
-    /**
-     * Добавление грейда в БД
-     */
-    @Override
-    public GradeDto addGrade(Grade grade) {
-        return GradeMapper.toGradeDto(gradeRepository.save(grade));
-    }
+  private final GradeRepository gradeRepository;
 
-    /**
-     * Обновление грейда в БД
-     */
-    @Override
-    public GradeDto updateGrade(Grade grade, Integer id) {
-        Grade gradeById = gradeRepository.findById(id).orElseThrow(() -> new GradeNotFoundException("Grade not found"));
+  @Override
+  public GradeDto createGrade(Grade grade) {
+    return GradeMapper.toGradeDto(gradeRepository.save(grade));
+  }
 
-        gradeById.setId(grade.getId());
-        gradeById.setName(grade.getName());
+  @Override
+  public GradeDto updateGrade(Grade grade, Long id) {
+    Grade gradeById = gradeRepository.findById(id)
+        .orElseThrow(() -> new GradeNotFoundException("Grade not found"));
 
-        return GradeMapper.toGradeDto(gradeRepository.save(gradeById));
-    }
+    gradeById.setId(grade.getId());
+    gradeById.setNameGrade(grade.getNameGrade());
 
-    /**
-     * Удаление всех грейдов из БД
-     */
-    @Override
-    public void deleteGrades() {
-        gradeRepository.deleteAll();
-    }
+    return GradeMapper.toGradeDto(gradeRepository.save(gradeById));
+  }
 
-    /**
-     * Удаление грейда по id из БД
-     */
-    @Override
-    public void deleteGradeById(Integer id) {
-        gradeRepository.deleteById(id);
-    }
+  @Override
+  public void deleteAllGrades() {
+    gradeRepository.deleteAll();
+  }
 
-    /**
-     * Получение списка грейдов из БД
-     */
-    @Override
-    public List<GradeDto> getGrades() {
-        return GradeMapper.toGradeDtoList(gradeRepository.findAll());
-    }
+  @Override
+  public void deleteGradeById(Long id) {
+    gradeRepository.deleteById(id);
+  }
 
-    /**
-     * Получение грейда по id
-     */
-    @Override
-    public GradeDto getGradeById(int id) {
-        return GradeMapper.toGradeDto(
-                gradeRepository.findById(id).orElseThrow(() -> new GradeNotFoundException("Grade not found")));
-    }
+  @Override
+  public List<GradeDto> getAllGrades() {
+    return GradeMapper.toGradeDtoList(gradeRepository.findAll());
+  }
+
+  @Override
+  public GradeDto getGradeById(Long id) {
+    return GradeMapper.toGradeDto(
+        gradeRepository.findById(id)
+            .orElseThrow(() -> new GradeNotFoundException("Grade not found")));
+  }
 }

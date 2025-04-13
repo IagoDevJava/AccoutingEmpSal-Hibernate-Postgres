@@ -1,80 +1,90 @@
 package com.anybank.controller;
 
-import com.anybank.dto.KpiDto;
-import com.anybank.model.Kpi;
 import com.anybank.service.KpiService;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.PositiveOrZero;
+import com.egorov.api.KpiApi;
+import com.egorov.model.Kpi;
+import com.egorov.model.KpiDto;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
+/**
+ * Контроллер для работы с KPI (Key Performance Indicators).
+ * Обеспечивает REST API для добавления, обновления, удаления и получения KPI.
+ * Реализует интерфейс {@link com.egorov.api.KpiApi}.
+ */
 @RestController
-@Transactional(isolation = Isolation.READ_COMMITTED)
 @RequiredArgsConstructor
-@RequestMapping("/kpis")
-public class KpiController {
-    private final KpiService kpiService;
+public class KpiController implements KpiApi {
 
-    /**
-     * Добавление kpi в БД
-     */
-    @Transactional
-    @PostMapping
-    public ResponseEntity<KpiDto> addKpi(Kpi kpi) {
-        return ResponseEntity.ok(kpiService.addKpi(kpi));
-    }
+  private final KpiService kpiService;
 
-    /**
-     * Обновление kpi в БД
-     */
-    @Transactional
-    @PatchMapping("/{id}")
-    public ResponseEntity<KpiDto> updateKpi(@Valid @RequestBody Kpi kpi,
-                                            @PathVariable @PositiveOrZero Long id) {
-        return ResponseEntity.ok(kpiService.updateKpi(kpi, id));
-    }
+  /**
+   * Добавляет новый KPI в систему
+   *
+   * @param kpi Объект KPI для добавления
+   * @return ResponseEntity с созданным KPI в формате DTO и статусом 200 OK
+   */
+  @Override
+  public ResponseEntity<KpiDto> addKpi(Kpi kpi) {
+    return ResponseEntity.ok(kpiService.addKpi(kpi));
+  }
 
-    /**
-     * Удаление всех kpi из БД
-     */
-    @Transactional
-    @DeleteMapping
-    public ResponseEntity<Void> deleteKpis() {
-        kpiService.deleteKpis();
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+  /**
+   * Обновляет существующий KPI по идентификатору
+   *
+   * @param id Идентификатор KPI для обновления
+   * @param kpi Объект KPI с новыми данными
+   * @return ResponseEntity с обновленным KPI в формате DTO и статусом 200 OK
+   */
+  @Override
+  public ResponseEntity<KpiDto> updateKpi(Long id, Kpi kpi) {
+    return ResponseEntity.ok(kpiService.updateKpi(kpi, id));
+  }
 
-    /**
-     * Удаление kpi по id из БД
-     */
-    @Transactional
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteKpiById(@PositiveOrZero @PathVariable Long id) {
-        kpiService.deleteKpiById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+  /**
+   * Удаляет все KPI из системы
+   *
+   * @return ResponseEntity с пустым телом и статусом 204 NO_CONTENT
+   */
+  @Override
+  public ResponseEntity<Void> deleteKpis() {
+    kpiService.deleteKpis();
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-    /**
-     * Получение списка kpi из БД
-     */
-    @Transactional(readOnly = true)
-    @GetMapping
-    public ResponseEntity<List<KpiDto>> getKpis() {
-        return ResponseEntity.ok(kpiService.getKpis());
-    }
+  /**
+   * Удаляет KPI по идентификатору
+   *
+   * @param id Идентификатор KPI для удаления
+   * @return ResponseEntity с пустым телом и статусом 204 NO_CONTENT
+   */
+  @Override
+  public ResponseEntity<Void> deleteKpiById(Long id) {
+    kpiService.deleteKpiById(id);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-    /**
-     * Получение kpi по id
-     */
-    @Transactional(readOnly = true)
-    @GetMapping("/{id}")
-    public ResponseEntity<KpiDto> getKpiById(@PositiveOrZero @PathVariable Long id) {
-        return ResponseEntity.ok(kpiService.getKpiById(id));
-    }
+  /**
+   * Возвращает список всех KPI в системе
+   *
+   * @return ResponseEntity со списком KPI в формате DTO и статусом 200 OK
+   */
+  @Override
+  public ResponseEntity<List<KpiDto>> getKpis() {
+    return ResponseEntity.ok(kpiService.getKpis());
+  }
+
+  /**
+   * Возвращает KPI по идентификатору
+   *
+   * @param id Идентификатор KPI
+   * @return ResponseEntity с KPI в формате DTO и статусом 200 OK
+   */
+  @Override
+  public ResponseEntity<KpiDto> getKpiById(Long id) {
+    return ResponseEntity.ok(kpiService.getKpiById(id));
+  }
 }

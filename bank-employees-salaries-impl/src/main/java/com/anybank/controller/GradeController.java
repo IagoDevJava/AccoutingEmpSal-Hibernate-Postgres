@@ -1,80 +1,91 @@
 package com.anybank.controller;
 
-import com.anybank.dto.GradeDto;
-import com.anybank.model.Grade;
 import com.anybank.service.GradeService;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.PositiveOrZero;
+import com.egorov.api.GradeApi;
+import com.egorov.model.Grade;
+import com.egorov.model.GradeDto;
+import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
+/**
+ * Контроллер для работы с грейдами сотрудников.
+ * Обеспечивает REST API для создания, обновления, удаления и получения информации о грейдах.
+ * Реализует интерфейс {@link GradeApi}.
+ */
 @RestController
-@Transactional(isolation = Isolation.READ_COMMITTED)
-@AllArgsConstructor
-@RequestMapping("/grades")
-public class GradeController {
-    private final GradeService gradeService;
+@RequiredArgsConstructor
+public class GradeController implements GradeApi {
 
-    /**
-     * Добавление грейда в БД
-     */
-    @Transactional
-    @PostMapping
-    public ResponseEntity<GradeDto> addGrade(@Valid @RequestBody Grade grade) {
-        return ResponseEntity.ok(gradeService.addGrade(grade));
-    }
+  private final GradeService gradeService;
 
-    /**
-     * Обновление грейда в БД
-     */
-    @Transactional
-    @PatchMapping("/{id}")
-    public ResponseEntity<GradeDto> updateGrade(@Valid @RequestBody Grade grade,
-                                                @PathVariable @PositiveOrZero Integer id) {
-        return ResponseEntity.ok(gradeService.updateGrade(grade, id));
-    }
+  /**
+   * Создает новый грейд и сохраняет его в базе данных
+   *
+   * @param grade Объект грейда для создания
+   * @return ResponseEntity с созданным объектом GradeDto и статусом 200 (OK)
+   */
+  @Override
+  public ResponseEntity<GradeDto> createGrade(Grade grade) {
+    return ResponseEntity.ok(gradeService.createGrade(grade));
+  }
 
-    /**
-     * Удаление всех грейдов из БД
-     */
-    @Transactional
-    @DeleteMapping
-    public ResponseEntity<Void> deleteGrades() {
-        gradeService.deleteGrades();
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+  /**
+   * Обновляет существующий грейд в базе данных
+   *
+   * @param id Идентификатор грейда для обновления
+   * @param grade Объект грейда с новыми данными
+   * @return ResponseEntity с обновленным объектом GradeDto и статусом 200 (OK)
+   */
+  @Override
+  public ResponseEntity<GradeDto> updateGrade(Long id, Grade grade) {
+    return ResponseEntity.ok(gradeService.updateGrade(grade, id));
+  }
 
-    /**
-     * Удаление грейда по id из БД
-     */
-    @Transactional
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGradeById(@PositiveOrZero @PathVariable Integer id) {
-        gradeService.deleteGradeById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+  /**
+   * Удаляет все грейды из базы данных
+   *
+   * @return ResponseEntity с пустым телом и статусом 204 (NO_CONTENT)
+   */
+  @Override
+  public ResponseEntity<Void> deleteAllGrades() {
+    gradeService.deleteAllGrades();
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-    /**
-     * Получение списка грейдов из БД
-     */
-    @Transactional(readOnly = true)
-    @GetMapping
-    public ResponseEntity<List<GradeDto>> getGrades() {
-        return ResponseEntity.ok(gradeService.getGrades());
-    }
+  /**
+   * Удаляет грейд по указанному идентификатору
+   *
+   * @param id Идентификатор грейда для удаления
+   * @return ResponseEntity с пустым телом и статусом 204 (NO_CONTENT)
+   */
+  @Override
+  public ResponseEntity<Void> deleteGradeById(Long id) {
+    gradeService.deleteGradeById(id);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-    /**
-     * Получение грейда по id
-     */
-    @Transactional(readOnly = true)
-    @GetMapping("/{id}")
-    public ResponseEntity<GradeDto> getGradeById(@PositiveOrZero @PathVariable Integer id) {
-        return ResponseEntity.ok(gradeService.getGradeById(id));
-    }
+  /**
+   * Возвращает список всех грейдов из базы данных
+   *
+   * @return ResponseEntity со списком GradeDto и статусом 200 (OK)
+   */
+  @Override
+  public ResponseEntity<List<GradeDto>> getAllGrades() {
+    return ResponseEntity.ok(gradeService.getAllGrades());
+  }
+
+  /**
+   * Возвращает грейд по указанному идентификатору
+   *
+   * @param id Идентификатор грейда
+   * @return ResponseEntity с объектом GradeDto и статусом 200 (OK)
+   */
+  @Override
+  public ResponseEntity<GradeDto> getGradeById(Long id) {
+    return ResponseEntity.ok(gradeService.getGradeById(id));
+  }
 }

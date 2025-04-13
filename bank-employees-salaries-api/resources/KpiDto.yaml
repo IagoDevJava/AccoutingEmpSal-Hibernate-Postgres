@@ -1,0 +1,91 @@
+openapi: 3.0.1
+info:
+  title: KPI API
+  version: 1.0.0
+
+components:
+  schemas:
+    Kpi:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+          description: Уникальный идентификатор KPI
+        personalKpi:
+          type: number
+          format: double
+          example: 85.5
+          description: Персональный KPI сотрудника
+        teamKpi:
+          type: number
+          format: double
+          example: 75.0
+          description: Командный KPI
+        commonKpi:
+          type: number
+          format: double
+          example: 80.2
+          description: Общий KPI
+        employee:
+          $ref: 'EmployeeDto.yaml#/components/schemas/Employee'
+        month:
+          type: string
+          example: "05"
+          description: Месяц KPI (формат MM)
+        year:
+          type: string
+          example: "2023"
+          description: Год KPI (формат YYYY)
+      required:
+        - personalKpi
+        - teamKpi
+        - commonKpi
+        - employee
+        - month
+        - year
+
+    KpiDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+          description: Уникальный идентификатор KPI
+        personalKpi:
+          type: number
+          format: double
+          example: 85.5
+          description: Персональный KPI сотрудника
+        teamKpi:
+          type: number
+          format: double
+          example: 75.0
+          description: Командный KPI
+        commonKpi:
+          type: number
+          format: double
+          example: 80.2
+          description: Общий KPI
+        employeeId:
+          type: integer
+          format: int64
+          example: 123
+          description: ID сотрудника
+        month:
+          type: string
+          example: "05"
+          description: Месяц KPI (формат MM)
+        year:
+          type: string
+          example: "2023"
+          description: Год KPI (формат YYYY)
+      required:
+        - personalKpi
+        - teamKpi
+        - commonKpi
+        - employeeId
+        - month
+        - year

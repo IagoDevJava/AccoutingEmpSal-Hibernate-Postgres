@@ -1,80 +1,90 @@
 package com.anybank.controller;
 
-import com.anybank.dto.WorkScheduleDto;
-import com.anybank.model.WorkSchedule;
 import com.anybank.service.WorkScheduleService;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AllArgsConstructor;
+import com.egorov.api.WorkScheduleApi;
+import com.egorov.model.WorkSchedule;
+import com.egorov.model.WorkScheduleDto;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
+/**
+ * Контроллер для управления графиками работы. Обеспечивает REST API для выполнения операций CRUD с
+ * графиками работы. Реализует интерфейс {@link WorkScheduleApi}.
+ */
 @RestController
-@Transactional(isolation = Isolation.READ_COMMITTED)
-@AllArgsConstructor
-@RequestMapping("/work-schedules")
-public class WorkScheduleController{
-    private final WorkScheduleService workScheduleService;
+@RequiredArgsConstructor
+public class WorkScheduleController implements WorkScheduleApi {
 
-    /**
-     * Добавить график в БД
-     */
-    @Transactional
-    @PostMapping()
-    public ResponseEntity<WorkScheduleDto> addSchedule(@Valid @RequestBody WorkSchedule workSchedule) {
-        return ResponseEntity.ok(workScheduleService.addSchedule(workSchedule));
-    }
+  private final WorkScheduleService workScheduleService;
 
-    /**
-     * Изменить график в БД
-     */
-    @Transactional
-    @PatchMapping("/{scheduleId}")
-    public ResponseEntity<WorkScheduleDto> updateSchedule(@RequestBody WorkSchedule workSchedule,
-                                                          @PositiveOrZero @PathVariable Integer scheduleId) {
-        return ResponseEntity.ok(workScheduleService.updateSchedule(workSchedule, scheduleId));
-    }
+  /**
+   * Добавляет новый график работы
+   *
+   * @param workSchedule график работы для добавления
+   * @return ResponseEntity с добавленным графиком работы в формате DTO и статусом OK
+   */
+  @Override
+  public ResponseEntity<WorkScheduleDto> addSchedule(WorkSchedule workSchedule) {
+    return ResponseEntity.ok(workScheduleService.addSchedule(workSchedule));
+  }
 
-    /**
-     * Удалить графики из БД
-     */
-    @Transactional
-    @DeleteMapping
-    public ResponseEntity<Void> deleteSchedules() {
-        workScheduleService.deleteSchedules();
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+  /**
+   * Обновляет существующий график работы
+   *
+   * @param scheduleId   идентификатор графика работы для обновления
+   * @param workSchedule новые данные графика работы
+   * @return ResponseEntity с обновленным графиком работы в формате DTO и статусом OK
+   */
+  @Override
+  public ResponseEntity<WorkScheduleDto> updateSchedule(Integer scheduleId,
+      WorkSchedule workSchedule) {
+    return ResponseEntity.ok(workScheduleService.updateSchedule(workSchedule, scheduleId));
+  }
 
-    /**
-     * Удалить график в БД по id
-     */
-    @Transactional
-    @DeleteMapping("/{scheduleId}")
-    public ResponseEntity<Void> deleteScheduleById(@PositiveOrZero @PathVariable Integer scheduleId) {
-        workScheduleService.deleteScheduleById(scheduleId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+  /**
+   * Удаляет все графики работы
+   *
+   * @return ResponseEntity с пустым телом и статусом NO_CONTENT
+   */
+  @Override
+  public ResponseEntity<Void> deleteSchedules() {
+    workScheduleService.deleteSchedules();
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-    /**
-     * Получить все графики в БД
-     */
-    @Transactional(readOnly = true)
-    @GetMapping
-    public ResponseEntity<List<WorkScheduleDto>> getSchedules() {
-        return ResponseEntity.ok(workScheduleService.getSchedules());
-    }
+  /**
+   * Удаляет график работы по идентификатору
+   *
+   * @param scheduleId идентификатор графика работы для удаления
+   * @return ResponseEntity с пустым телом и статусом NO_CONTENT
+   */
+  @Override
+  public ResponseEntity<Void> deleteScheduleById(Integer scheduleId) {
+    workScheduleService.deleteScheduleById(scheduleId);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-    /**
-     * Получить график в БД по id
-     */
-    @Transactional(readOnly = true)
-    @GetMapping("/{scheduleId}")
-    public ResponseEntity<WorkScheduleDto> getScheduleById(@PositiveOrZero @PathVariable Integer scheduleId) {
-        return ResponseEntity.ok(workScheduleService.getScheduleById(scheduleId));
-    }
+  /**
+   * Возвращает список всех графиков работы
+   *
+   * @return ResponseEntity со списком графиков работы в формате DTO и статусом OK
+   */
+  @Override
+  public ResponseEntity<List<WorkScheduleDto>> getSchedules() {
+    return ResponseEntity.ok(workScheduleService.getSchedules());
+  }
+
+  /**
+   * Возвращает график работы по идентификатору
+   *
+   * @param scheduleId идентификатор графика работы
+   * @return ResponseEntity с графиком работы в формате DTO и статусом OK
+   */
+  @Override
+  public ResponseEntity<WorkScheduleDto> getScheduleById(Integer scheduleId) {
+    return ResponseEntity.ok(workScheduleService.getScheduleById(scheduleId));
+  }
 }

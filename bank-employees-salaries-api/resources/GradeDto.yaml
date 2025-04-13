@@ -1,0 +1,35 @@
+openapi: 3.0.1
+info:
+  title: API для работы с уровнями (Grades)
+  description: API для управления данными об оценках и их DTO-представлениями
+  version: 1.0.0
+
+paths: {}
+
+components:
+  schemas:
+    Grade:
+      type: object
+      required: [ id, nameGrade ]
+      properties:
+        id:
+          description: Уникальный идентификатор оценки
+          type: integer
+          format: int64
+          example: 12345
+        nameGrade:
+          description: Наименование оценки
+          type: string
+
+    GradeDto:
+      type: object
+      required: [ id, nameGrade ]
+      properties:
+        id:
+          description: Уникальный идентификатор оценки
+          type: integer
+          format: int64
+          example: 12345
+        nameGrade:
+          description: Наименование оценки
+          type: string

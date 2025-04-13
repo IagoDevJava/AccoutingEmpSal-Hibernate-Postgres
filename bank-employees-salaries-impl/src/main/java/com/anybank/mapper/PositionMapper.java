@@ -1,7 +1,7 @@
 package com.anybank.mapper;
 
-import com.anybank.dto.PositionDto;
-import com.anybank.model.Position;
+import com.egorov.model.Position;
+import com.egorov.model.PositionDto;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,12 +9,11 @@ public class PositionMapper {
 
   //Position to PositionDto
   public static PositionDto toPositionDto(Position position) {
-    return PositionDto.builder()
+    return new PositionDto(
+        position.getName(),
+        position.getDepartment().getId())
         .id(position.getId())
-        .name(position.getName())
-        .departmentId(position.getDepartment().getId())
-        .gradeId(position.getGrade().getId())
-        .build();
+        .gradeId(position.getGrade().getId());
   }
 
   //PositionList to PositionDtoList

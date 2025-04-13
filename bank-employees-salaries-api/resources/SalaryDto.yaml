@@ -1,0 +1,52 @@
+openapi: 3.0.3
+info:
+  title: Position API
+  version: 1.0.0
+
+components:
+  schemas:
+    Salary:
+      type: object
+      description: Модель зарплаты сотрудника
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Уникальный идентификатор записи о зарплате
+        employee:
+          $ref: 'EmployeeDto.yaml#/components/schemas/Employee'
+          description: Сотрудник, которому начислена зарплата
+        department:
+          $ref: 'DepartmentDto.yaml#/components/schemas/Department'
+          description: Отдел, в котором работает сотрудник
+        period:
+          description: Период начисления зарплаты
+          $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      required:
+        - employee
+        - department
+        - period
+
+    SalaryDto:
+      type: object
+      description: DTO для работы с зарплатами сотрудников
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Уникальный идентификатор записи о зарплате
+        employeeId:
+          type: integer
+          format: int64
+          description: Идентификатор сотрудника
+        departmentId:
+          type: integer
+          format: int64
+          description: Идентификатор отдела
+        period:
+          description: Период начисления зарплаты
+          $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+          required:
+            - employeeId
+            - departmentId
+            - period
