@@ -31,13 +31,31 @@ public class SalaryController implements SalariesApi {
   private final SalaryService salaryService;
 
   /**
-   * Добавляет новую запись о зарплате
+   * Рассчитывает зарплаты сотрудников отдела за указанный период
    *
-   * @param salary данные зарплаты для добавления
+   * @param departmentId   идентификатор отдела
+   * @param dateTimePeriod период времени для расчета зарплат
+   * @return {@link ResponseEntity} со списком {@link SalaryDto} и HTTP статусом 200 (OK)
+   */
+  @Override
+  public ResponseEntity<List<SalaryDto>> calculateDepartmentSalariesByPeriod(Long departmentId,
+      DateTimePeriod dateTimePeriod) {
+    return ResponseEntity.ok(
+        salaryService.calculateDepartmentSalariesByPeriod(departmentId, dateTimePeriod));
+  }
+
+  /**
+   * Рассчитывает зарплату сотрудника за указанный период
+   *
+   * @param employeeId     идентификатор сотрудника
+   * @param dateTimePeriod период времени для расчета зарплаты
    * @return {@link ResponseEntity} с {@link SalaryDto} и HTTP статусом 200 (OK)
    */
-  public ResponseEntity<SalaryDto> addSalary(Salary salary) {
-    return ResponseEntity.ok(salaryService.addSalary(salary));
+  @Override
+  public ResponseEntity<SalaryDto> calculateEmployeeSalaryByPeriod(Long employeeId,
+      DateTimePeriod dateTimePeriod) {
+    return ResponseEntity.ok(
+        salaryService.calculateEmployeeSalaryByPeriod(employeeId, dateTimePeriod));
   }
 
   /**

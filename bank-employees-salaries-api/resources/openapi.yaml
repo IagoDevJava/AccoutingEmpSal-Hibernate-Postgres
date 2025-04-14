@@ -931,25 +931,6 @@ paths:
 
   # ========== Salary Endpoints ==========
   /salaries:
-    post:
-      operationId: addSalary
-      tags:
-        - Salaries
-      summary: Сохранить данные о зарплате
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: 'SalaryDto.yaml#/components/schemas/Salary'
-      responses:
-        '200':
-          description: Данные о зарплате успешно сохранены
-          content:
-            application/json:
-              schema:
-                $ref: 'SalaryDto.yaml#/components/schemas/SalaryDto'
-
     delete:
       operationId: deleteAllSalaries
       tags:
@@ -964,7 +945,7 @@ paths:
       operationId: getCompanySalariesByPeriod
       tags:
         - Salaries
-      summary: Получить данные о зарплатах по компании за месяц
+      summary: Получить данные о зарплатах по компании за период
       requestBody:
         required: true
         content:
@@ -973,7 +954,7 @@ paths:
               $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
       responses:
         '200':
-          description: Список зарплат по компании за указанный месяц
+          description: Список зарплат по компании за указанный период
           content:
             application/json:
               schema:
@@ -1050,7 +1031,7 @@ paths:
               schema:
                 $ref: 'SalaryDto.yaml#/components/schemas/SalaryDto'
 
-  /salaries/calculate/{employeeId}/period:
+  /salaries/{employeeId}/period:
     get:
       operationId: getEmployeeSalaryByPeriod
       tags:
@@ -1073,13 +1054,13 @@ paths:
               $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
       responses:
         '200':
-          description: Данные о зарплате сотрудника за месяц успешно получены
+          description: Данные о зарплате сотрудника за период успешно получены
           content:
             application/json:
               schema:
                 $ref: 'SalaryDto.yaml#/components/schemas/SalaryDto'
 
-  /salaries/calculate/{departmentId}/period:
+  /salaries/{departmentId}/period:
     get:
       operationId: getDepartmentSalariesByPeriod
       tags:
@@ -1102,13 +1083,73 @@ paths:
               $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
       responses:
         '200':
-          description: Список зарплат отдела за указанный месяц успешно получен
+          description: Список зарплат отдела за указанный период успешно получен
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: 'SalaryDto.yaml#/components/schemas/SalaryDto'
+
+  /salaries/calculate/{departmentId}/period:
+    get:
+      operationId: calculateDepartmentSalariesByPeriod
+      tags:
+        - Salaries
+      summary: Рассчитать зарплаты отдела за период
+      parameters:
+        - name: departmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+          description: ID отдела
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      responses:
+        '200':
+          description: Список зарплат отдела за указанный период успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'SalaryDto.yaml#/components/schemas/SalaryDto'
+
+  /salaries/calculate/{employeeId}/period:
+    get:
+      operationId: calculateEmployeeSalaryByPeriod
+      tags:
+        - Salaries
+      summary: Рассчитать зарплату сотрудника за период
+      parameters:
+        - name: employeeId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+          description: ID сотрудника
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'CommonDto.yaml#/components/schemas/DateTimePeriod'
+      responses:
+        '200':
+          description: Данные о зарплате сотрудника за период успешно получены
+          content:
+            application/json:
+              schema:
+                $ref: 'SalaryDto.yaml#/components/schemas/SalaryDto'
 
   # ========== Salaries Data Endpoints ==========
   /salaries-dates:

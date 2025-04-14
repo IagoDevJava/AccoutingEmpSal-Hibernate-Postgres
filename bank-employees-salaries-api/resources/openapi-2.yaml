@@ -1,0 +1,1057 @@
+openapi: 3.0.1
+info:
+  title: Company Management API
+  description: |
+    Полное API для управления организационной структурой компании, включая:
+    - Департаменты и их руководителей
+    - Сотрудников с их должностями и KPI
+    - Систему грейдов и окладов
+    - Графики работы
+    - Расчет зарплат и премий
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: api@company.com
+
+servers:
+  - url: https://api.company.com/v1
+    description: Production server
+  - url: http://localhost:8000/v1
+    description: Development server
+
+tags:
+  - name: Departments
+    description: Управление департаментами компании
+  - name: Employees
+    description: Управление сотрудниками компании
+  - name: Positions
+    description: Управление должностями в компании
+  - name: Grades
+    description: Управление грейдами сотрудников
+  - name: KPI
+    description: Управление ключевыми показателями эффективности
+  - name: WorkSchedules
+    description: Управление графиками работы
+
+paths:
+  # =============================================
+  # Departments endpoints
+  # =============================================
+  /departments:
+    get:
+      tags: [Departments]
+      summary: Получить список департаментов
+      description: Возвращает список всех департаментов с основной информацией
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Department'
+    post:
+      tags: [Departments]
+      summary: Создать новый департамент
+      description: Создает новый департамент в организационной структуре компании
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartmentInput'
+      responses:
+        '201':
+          description: Департамент успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+        '400':
+          description: Неверные входные данные
+
+  /departments/{id}:
+    get:
+      tags: [Departments]
+      summary: Получить информацию о департаменте
+      description: Возвращает полную информацию о департаменте по его ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+        '404':
+          description: Департамент не найден
+    put:
+      tags: [Departments]
+      summary: Обновить информацию о департаменте
+      description: Обновляет информацию о департаменте по его ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartmentInput'
+      responses:
+        '200':
+          description: Информация успешно обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+        '404':
+          description: Департамент не найден
+    delete:
+      tags: [Departments]
+      summary: Удалить департамент
+      description: Удаляет департамент по его ID (если в нем нет сотрудников)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Департамент успешно удален
+        '400':
+          description: Невозможно удалить департамент (есть сотрудники)
+
+  # =============================================
+  # Employees endpoints
+  # =============================================
+  /employees:
+    get:
+      tags: [Employees]
+      summary: Получить список сотрудников
+      description: Возвращает список всех сотрудников компании
+      parameters:
+        - name: department_id
+          in: query
+          schema:
+            type: integer
+          description: Фильтр по ID департамента
+        - name: position_id
+          in: query
+          schema:
+            type: integer
+          description: Фильтр по ID должности
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+    post:
+      tags: [Employees]
+      summary: Создать нового сотрудника
+      description: Добавляет нового сотрудника в компанию
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeInput'
+      responses:
+        '201':
+          description: Сотрудник успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '400':
+          description: Неверные входные данные
+
+  /employees/{id}:
+    get:
+      tags: [Employees]
+      summary: Получить информацию о сотруднике
+      description: Возвращает полную информацию о сотруднике по его ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '404':
+          description: Сотрудник не найден
+    put:
+      tags: [Employees]
+      summary: Обновить информацию о сотруднике
+      description: Обновляет информацию о сотруднике по его ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeInput'
+      responses:
+        '200':
+          description: Информация успешно обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '404':
+          description: Сотрудник не найден
+    delete:
+      tags: [Employees]
+      summary: Удалить сотрудника
+      description: Удаляет сотрудника по его ID (если он не руководит департаментом)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Сотрудник успешно удален
+        '400':
+          description: Невозможно удалить сотрудника (руководит департаментом)
+
+  /employees/{id}/salary:
+    get:
+      tags: [Employees]
+      summary: Получить расчет зарплаты
+      description: Возвращает расчет зарплаты сотрудника (оклад + премия)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  salary:
+                    type: number
+                    description: Оклад
+                  bonus:
+                    type: number
+                    description: Премия
+                  total:
+                    type: number
+                    description: Итого к выплате
+        '404':
+          description: Сотрудник не найден
+
+  # =============================================
+  # Positions endpoints
+  # =============================================
+  /positions:
+    get:
+      tags: [Positions]
+      summary: Получить список должностей
+      description: Возвращает список всех должностей в компании
+      parameters:
+        - name: department_id
+          in: query
+          schema:
+            type: integer
+          description: Фильтр по ID департамента
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Position'
+    post:
+      tags: [Positions]
+      summary: Создать новую должность
+      description: Создает новую должность в организационной структуре
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PositionInput'
+      responses:
+        '201':
+          description: Должность успешно создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Position'
+        '400':
+          description: Неверные входные данные
+
+  /positions/{id}:
+    get:
+      tags: [Positions]
+      summary: Получить информацию о должности
+      description: Возвращает полную информацию о должности по ее ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Position'
+        '404':
+          description: Должность не найдена
+    put:
+      tags: [Positions]
+      summary: Обновить информацию о должности
+      description: Обновляет информацию о должности по ее ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PositionInput'
+      responses:
+        '200':
+          description: Информация успешно обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Position'
+        '404':
+          description: Должность не найдена
+    delete:
+      tags: [Positions]
+      summary: Удалить должность
+      description: Удаляет должность по ее ID (если на ней нет сотрудников)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Должность успешно удалена
+        '400':
+          description: Невозможно удалить должность (есть сотрудники)
+
+  # =============================================
+  # Grades endpoints
+  # =============================================
+  /grades:
+    get:
+      tags: [Grades]
+      summary: Получить список грейдов
+      description: Возвращает список всех грейдов в компании
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Grade'
+    post:
+      tags: [Grades]
+      summary: Создать новый грейд
+      description: Создает новый грейд в системе грейдов компании
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GradeInput'
+      responses:
+        '201':
+          description: Грейд успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grade'
+        '400':
+          description: Неверные входные данные
+
+  /grades/{id}:
+    get:
+      tags: [Grades]
+      summary: Получить информацию о грейде
+      description: Возвращает полную информацию о грейде по его ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grade'
+        '404':
+          description: Грейд не найден
+    put:
+      tags: [Grades]
+      summary: Обновить информацию о грейде
+      description: Обновляет информацию о грейде по его ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GradeInput'
+      responses:
+        '200':
+          description: Информация успешно обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grade'
+        '404':
+          description: Грейд не найден
+    delete:
+      tags: [Grades]
+      summary: Удалить грейд
+      description: Удаляет грейд по его ID (если на него нет ссылок)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Грейд успешно удален
+        '400':
+          description: Невозможно удалить грейд (есть ссылки из должностей)
+
+  # =============================================
+  # KPI endpoints
+  # =============================================
+  /kpis:
+    get:
+      tags: [KPI]
+      summary: Получить список KPI
+      description: Возвращает список всех KPI в компании
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KPI'
+    post:
+      tags: [KPI]
+      summary: Создать новый KPI
+      description: Создает новый уровень KPI в системе
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KPIInput'
+      responses:
+        '201':
+          description: KPI успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KPI'
+        '400':
+          description: Неверные входные данные
+
+  /kpis/{id}:
+    get:
+      tags: [KPI]
+      summary: Получить информацию о KPI
+      description: Возвращает полную информацию о KPI по его ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KPI'
+        '404':
+          description: KPI не найден
+    put:
+      tags: [KPI]
+      summary: Обновить информацию о KPI
+      description: Обновляет информацию о KPI по его ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KPIInput'
+      responses:
+        '200':
+          description: Информация успешно обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KPI'
+        '404':
+          description: KPI не найден
+    delete:
+      tags: [KPI]
+      summary: Удалить KPI
+      description: Удаляет KPI по его ID (если на него нет ссылок)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: KPI успешно удален
+        '400':
+          description: Невозможно удалить KPI (есть ссылки из сотрудников)
+
+  # =============================================
+  # Work Schedules endpoints
+  # =============================================
+  /work-schedules:
+    get:
+      tags: [WorkSchedules]
+      summary: Получить список графиков работы
+      description: Возвращает список всех графиков работы в компании
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkSchedule'
+    post:
+      tags: [WorkSchedules]
+      summary: Создать новый график работы
+      description: Создает новый график работы в системе
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkScheduleInput'
+      responses:
+        '201':
+          description: График работы успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkSchedule'
+        '400':
+          description: Неверные входные данные
+
+  /work-schedules/{id}:
+    get:
+      tags: [WorkSchedules]
+      summary: Получить информацию о графике работы
+      description: Возвращает полную информацию о графике работы по его ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkSchedule'
+        '404':
+          description: График работы не найден
+    put:
+      tags: [WorkSchedules]
+      summary: Обновить информацию о графике работы
+      description: Обновляет информацию о графике работы по его ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkScheduleInput'
+      responses:
+        '200':
+          description: Информация успешно обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkSchedule'
+        '404':
+          description: График работы не найден
+    delete:
+      tags: [WorkSchedules]
+      summary: Удалить график работы
+      description: Удаляет график работы по его ID (если на него нет ссылок)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: График работы успешно удален
+        '400':
+          description: Невозможно удалить график работы (есть ссылки из должностей)
+
+components:
+  schemas:
+    # =============================================
+    # Main schemas
+    # =============================================
+    Department:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор департамента
+        name:
+          type: string
+          description: Название департамента
+        phone:
+          type: string
+          nullable: true
+          description: Контактный телефон департамента
+        email:
+          type: string
+          format: email
+          nullable: true
+          description: Электронная почта департамента
+        head_id:
+          type: integer
+          nullable: true
+          description: ID сотрудника-руководителя департамента
+        description:
+          type: string
+          nullable: true
+          description: Описание департамента
+        created_at:
+          type: string
+          format: date-time
+          description: Дата и время создания записи
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата и время последнего обновления записи
+
+    Employee:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор сотрудника
+        first_name:
+          type: string
+          description: Имя сотрудника
+        last_name:
+          type: string
+          description: Фамилия сотрудника
+        middle_name:
+          type: string
+          nullable: true
+          description: Отчество сотрудника (если есть)
+        phone:
+          type: string
+          nullable: true
+          description: Контактный телефон сотрудника
+        email:
+          type: string
+          format: email
+          nullable: true
+          description: Электронная почта сотрудника
+        position_id:
+          type: integer
+          description: ID должности сотрудника
+        position_name:
+          type: string
+          description: Название должности (вычисляемое поле)
+        kpi_id:
+          type: integer
+          nullable: true
+          description: ID KPI сотрудника
+        kpi_name:
+          type: string
+          nullable: true
+          description: Название KPI (вычисляемое поле)
+        department_id:
+          type: integer
+          description: ID департамента
+        department_name:
+          type: string
+          description: Название департамента (вычисляемое поле)
+        hire_date:
+          type: string
+          format: date
+          description: Дата приема на работу
+        salary:
+          type: number
+          format: float
+          description: Оклад сотрудника
+        bonus:
+          type: number
+          format: float
+          description: Премия сотрудника
+        created_at:
+          type: string
+          format: date-time
+          description: Дата и время создания записи
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата и время последнего обновления записи
+
+    Position:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор должности
+        name:
+          type: string
+          description: Название должности
+        department_id:
+          type: integer
+          description: ID департамента
+        department_name:
+          type: string
+          description: Название департамента (вычисляемое поле)
+        grade_id:
+          type: integer
+          description: ID грейда
+        grade_name:
+          type: string
+          description: Название грейда (вычисляемое поле)
+        schedule_id:
+          type: integer
+          description: ID графика работы
+        schedule_name:
+          type: string
+          description: Название графика работы (вычисляемое поле)
+        salary:
+          type: number
+          format: float
+          description: Базовый оклад для должности
+        created_at:
+          type: string
+          format: date-time
+          description: Дата и время создания записи
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата и время последнего обновления записи
+
+    Grade:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор грейда
+        name:
+          type: string
+          description: Название грейда (например, Junior, Middle, Senior)
+        min_salary:
+          type: number
+          format: float
+          description: Минимальный оклад для грейда
+        max_salary:
+          type: number
+          format: float
+          description: Максимальный оклад для грейда
+        description:
+          type: string
+          nullable: true
+          description: Описание грейда
+        created_at:
+          type: string
+          format: date-time
+          description: Дата и время создания записи
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата и время последнего обновления записи
+
+    KPI:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор KPI
+        name:
+          type: string
+          description: Название уровня KPI (например, Низкий, Средний, Высокий)
+        bonus_percent:
+          type: number
+          format: float
+          description: Процент премии от оклада при данном KPI
+        description:
+          type: string
+          nullable: true
+          description: Описание критериев для достижения данного KPI
+        created_at:
+          type: string
+          format: date-time
+          description: Дата и время создания записи
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата и время последнего обновления записи
+
+    WorkSchedule:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор графика работы
+        name:
+          type: string
+          description: Название графика (например, "5/2", "2/2")
+        hours_per_week:
+          type: integer
+          description: Количество рабочих часов в неделю
+        description:
+          type: string
+          nullable: true
+          description: Описание графика работы
+        created_at:
+          type: string
+          format: date-time
+          description: Дата и время создания записи
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата и время последнего обновления записи
+
+    # =============================================
+    # Input schemas
+    # =============================================
+    DepartmentInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          description: Название департамента
+        phone:
+          type: string
+          nullable: true
+          description: Контактный телефон департамента
+        email:
+          type: string
+          format: email
+          nullable: true
+          description: Электронная почта департамента
+        head_id:
+          type: integer
+          nullable: true
+          description: ID сотрудника-руководителя департамента
+        description:
+          type: string
+          nullable: true
+          description: Описание департамента
+
+    EmployeeInput:
+      type: object
+      required: [first_name, last_name, position_id, department_id, hire_date, salary]
+      properties:
+        first_name:
+          type: string
+          description: Имя сотрудника
+        last_name:
+          type: string
+          description: Фамилия сотрудника
+        middle_name:
+          type: string
+          nullable: true
+          description: Отчество сотрудника (если есть)
+        phone:
+          type: string
+          nullable: true
+          description: Контактный телефон сотрудника
+        email:
+          type: string
+          format: email
+          nullable: true
+          description: Электронная почта сотрудника
+        position_id:
+          type: integer
+          description: ID должности сотрудника
+        kpi_id:
+          type: integer
+          nullable: true
+          description: ID KPI сотрудника
+        department_id:
+          type: integer
+          description: ID департамента
+        hire_date:
+          type: string
+          format: date
+          description: Дата приема на работу
+        salary:
+          type: number
+          format: float
+          description: Оклад сотрудника
+        bonus:
+          type: number
+          format: float
+          default: 0
+          description: Премия сотрудника
+
+    PositionInput:
+      type: object
+      required: [name, department_id, grade_id, schedule_id, salary]
+      properties:
+        name:
+          type: string
+          description: Название должности
+        department_id:
+          type: integer
+          description: ID департамента
+        grade_id:
+          type: integer
+          description: ID грейда
+        schedule_id:
+          type: integer
+          description: ID графика работы
+        salary:
+          type: number
+          format: float
+          description: Базовый оклад для должности
+
+    GradeInput:
+      type: object
+      required: [name, min_salary, max_salary]
+      properties:
+        name:
+          type: string
+          description: Название грейда
+        min_salary:
+          type: number
+          format: float
+          description: Минимальный оклад для грейда
+        max_salary:
+          type: number
+          format: float
+          description: Максимальный оклад для грейда
+        description:
+          type: string
+          nullable: true
+          description: Описание грейда
+
+    KPIInput:
+      type: object
+      required: [name, bonus_percent]
+      properties:
+        name:
+          type: string
+          description: Название уровня KPI
+        bonus_percent:
+          type: number
+          format: float
+          description: Процент премии от оклада при данном KPI
+        description:
+          type: string
+          nullable: true
+          description: Описание критериев для достижения данного KPI
+
+    WorkScheduleInput:
+      type: object
+      required: [name, hours_per_week]
+      properties:
+        name:
+          type: string
+          description: Название графика работы
+        hours_per_week:
+          type: integer
+          description: Количество рабочих часов в неделю
+        description:
+          type: string
+          nullable: true
+          description: Описание графика работы
+
+  # =============================================
+  # Security
+  # =============================================
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []

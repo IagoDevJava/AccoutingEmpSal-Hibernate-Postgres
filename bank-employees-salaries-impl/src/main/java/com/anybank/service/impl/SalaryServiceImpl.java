@@ -1,6 +1,5 @@
 package com.anybank.service.impl;
 
-import com.anybank.exception.EmployeeNotFoundException;
 import com.anybank.exception.KpiNotFoundException;
 import com.anybank.exception.SalaryNotFoundException;
 import com.anybank.mapper.SalaryMapper;
@@ -28,11 +27,6 @@ public class SalaryServiceImpl implements SalaryService {
   private final EmployeeRepository employeeRepository;
   private final SalariesDateRepository salariesDateRepository;
   private final KpiRepository kpiRepository;
-
-  @Override
-  public SalaryDto addSalary(Salary salary) {
-    return SalaryMapper.toSalaryDto(salaryRepository.save(salary));
-  }
 
   @Override
   public void deleteAllSalaries() {
@@ -82,6 +76,18 @@ public class SalaryServiceImpl implements SalaryService {
     return SalaryMapper.toSalaryDto(salaryRepository.save(salaryById));
   }
 
+  @Override
+  public List<SalaryDto> calculateDepartmentSalariesByPeriod(Long departmentId,
+      DateTimePeriod dateTimePeriod) {
+    return List.of();
+  }
+
+  @Override
+  public SalaryDto calculateEmployeeSalaryByPeriod(Long employeeId, DateTimePeriod dateTimePeriod) {
+    return null;
+  }
+
+
 //  @Override
 //  public SalaryDto getSalaryByMonthForEmployee(Long employeeId, String month, String year) {
 //    return SalaryMapper.toSalaryDto(
@@ -105,7 +111,6 @@ public class SalaryServiceImpl implements SalaryService {
 //    );
 //  }
 
-
 //  @Override
 //  public List<SalaryDto> getSalaryByYearForDepartment(Long departmentId, String year) {
 //    return SalaryMapper.toSalaryDtoList(
@@ -122,7 +127,6 @@ public class SalaryServiceImpl implements SalaryService {
 //  public List<SalaryDto> getSalaryByYear(String year) {
 //    return SalaryMapper.toSalaryDtoList(salaryRepository.findByYear(year));
 //  }
-
 
 //  @Override
 //  public Salary calculateSalaryByMonthForEmployee(Long employeeId,

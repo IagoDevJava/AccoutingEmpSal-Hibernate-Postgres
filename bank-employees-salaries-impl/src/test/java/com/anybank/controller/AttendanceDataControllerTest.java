@@ -22,6 +22,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Тестовый класс для {@link AttendanceDataController}
+ */
 @ExtendWith(MockitoExtension.class)
 class AttendanceDataControllerTest {
 
@@ -37,6 +40,9 @@ class AttendanceDataControllerTest {
   private final Long testId = 1L;
   private final Long employeeId = 1L;
 
+  /**
+   * Инициализация тестовых данных перед каждым тестом
+   */
   @BeforeEach
   void setUp() {
     attendanceData = new AttendanceData();
@@ -45,6 +51,10 @@ class AttendanceDataControllerTest {
         OffsetDateTime.now().plusHours(1L));
   }
 
+  /**
+   * Тест метода {@link AttendanceDataController#createAttendanceData(AttendanceData)} Должен
+   * вернуть статус OK и DTO созданных данных
+   */
   @Test
   void createAttendanceData_shouldReturnOkWithDto() {
     when(attendanceDataService.createAttendanceData(any(AttendanceData.class)))
@@ -58,6 +68,10 @@ class AttendanceDataControllerTest {
     verify(attendanceDataService).createAttendanceData(attendanceData);
   }
 
+  /**
+   * Тест метода {@link AttendanceDataController#deleteAllAttendanceData()} Должен вернуть статус
+   * NO_CONTENT
+   */
   @Test
   void deleteAllAttendanceData_shouldReturnNoContent() {
     ResponseEntity<Void> response = attendanceDataController.deleteAllAttendanceData();
@@ -66,6 +80,10 @@ class AttendanceDataControllerTest {
     verify(attendanceDataService).deleteAllAttendanceData();
   }
 
+  /**
+   * Тест метода {@link AttendanceDataController#deleteAttendanceDataById(Long)} Должен вернуть
+   * статус NO_CONTENT
+   */
   @Test
   void deleteAttendanceDataById_shouldReturnNoContent() {
     ResponseEntity<Void> response = attendanceDataController.deleteAttendanceDataById(testId);
@@ -74,6 +92,10 @@ class AttendanceDataControllerTest {
     verify(attendanceDataService).deleteAttendanceDataById(testId);
   }
 
+  /**
+   * Тест метода {@link AttendanceDataController#deleteAttendanceDataByPeriod(DateTimePeriod)}
+   * Должен вернуть статус NO_CONTENT
+   */
   @Test
   void deleteAttendanceDataByPeriod_shouldReturnNoContent() {
     ResponseEntity<Void> response =
@@ -83,6 +105,11 @@ class AttendanceDataControllerTest {
     verify(attendanceDataService).deleteAttendanceDataByPeriod(period);
   }
 
+  /**
+   * Тест метода
+   * {@link AttendanceDataController#deleteEmployeeAttendanceDataByPeriod(Long, DateTimePeriod)}
+   * Должен вернуть статус NO_CONTENT
+   */
   @Test
   void deleteEmployeeAttendanceDataByPeriod_shouldReturnNoContent() {
     ResponseEntity<Void> response =
@@ -92,6 +119,11 @@ class AttendanceDataControllerTest {
     verify(attendanceDataService).deleteEmployeeAttendanceDataByPeriod(employeeId, period);
   }
 
+  /**
+   * Тест метода
+   * {@link AttendanceDataController#getDepartmentAttendanceDataByPeriod(Long, DateTimePeriod)}
+   * Должен вернуть статус OK и список DTO данных посещаемости отдела
+   */
   @Test
   void getDepartmentAttendanceDataByPeriod_shouldReturnOkWithList() {
     List<AttendanceDataDto> expectedList = Collections.singletonList(attendanceDataDto);
@@ -108,6 +140,10 @@ class AttendanceDataControllerTest {
     verify(attendanceDataService).getDepartmentAttendanceDataByPeriod(departmentId, period);
   }
 
+  /**
+   * Тест метода {@link AttendanceDataController#getAttendanceDataByPeriod(DateTimePeriod)} Должен
+   * вернуть статус OK и список DTO данных посещаемости
+   */
   @Test
   void getAttendanceDataByPeriod_shouldReturnOkWithList() {
     List<AttendanceDataDto> expectedList = Collections.singletonList(attendanceDataDto);
@@ -122,6 +158,11 @@ class AttendanceDataControllerTest {
     verify(attendanceDataService).getAttendanceDataByPeriod(period);
   }
 
+  /**
+   * Тест метода
+   * {@link AttendanceDataController#getEmployeeAttendanceDataByPeriod(Long, DateTimePeriod)} Должен
+   * вернуть статус OK и список DTO данных посещаемости сотрудника
+   */
   @Test
   void getEmployeeAttendanceDataByPeriod_shouldReturnOkWithList() {
     List<AttendanceDataDto> expectedList = Collections.singletonList(attendanceDataDto);
@@ -137,6 +178,10 @@ class AttendanceDataControllerTest {
     verify(attendanceDataService).getEmployeeAttendanceDataByPeriod(employeeId, period);
   }
 
+  /**
+   * Тест метода {@link AttendanceDataController#updateAttendanceData(Long, AttendanceData)} Должен
+   * вернуть статус OK и обновленное DTO данных посещаемости
+   */
   @Test
   void updateAttendanceData_shouldReturnOkWithDto() {
     when(attendanceDataService.updateAttendanceData(any(AttendanceData.class), anyLong()))
