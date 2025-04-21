@@ -1,0 +1,242 @@
+Пример 1: Использование представления
+
+CREATE OR REPLACE VIEW comprehensive_salary_report AS
+WITH
+-- Базовые данные сотрудников
+employee_data AS (
+    SELECT
+        e.id,
+        e.last_name || ' ' || e.first_name AS employee_name,
+        e.date_of_admission,
+        d.name AS department,
+        p.name AS position,
+        ws.work_day,
+        ws.week_day,
+        ws.work_hour,
+        sd.wage AS base_salary,
+        sd.bonus AS base_bonus,
+        EXTRACT(YEAR FROM age(CURRENT_DATE, e.date_of_admission)) * 12 +
+        EXTRACT(MONTH FROM age(CURRENT_DATE, e.date_of_admission)) AS experience_months
+    FROM
+        employees e
+    JOIN
+        departments d ON e.department_id = d.id
+    JOIN
+        positions p ON e.position_id = p.id
+    JOIN
+        work_schedules ws ON e.work_schedule_id = ws.id
+    JOIN
+        salaries_data sd ON p.id = sd.position_id
+),
+
+-- Данные по посещаемости за текущий месяц
+attendance_summary AS (
+    SELECT
+        employee_id,
+        COUNT(*) AS worked_days,
+        SUM(work_hours) AS worked_hours,
+        COUNT(CASE WHEN work_hours > (SELECT work_hour FROM work_schedules ws JOIN employees e ON ws.id = e.work_schedule_id WHERE e.id = ad.employee_id)
+              THEN 1 END) AS overtime_days,
+        SUM(CASE WHEN work_hours > (SELECT work_hour FROM work_schedules ws JOIN employees e ON ws.id = e.work_schedule_id WHERE e.id = ad.employee_id)
+            THEN work_hours - (SELECT work_hour FROM work_schedules ws JOIN employees e ON ws.id = e.work_schedule_id WHERE e.id = ad.employee_id)
+            ELSE 0 END) AS overtime_hours
+    FROM
+        attendance_data ad
+    WHERE
+        date_att BETWEEN date_trunc('month', CURRENT_DATE) AND (date_trunc('month', CURRENT_DATE) + INTERVAL '1 month' - INTERVAL '1 day')
+        AND status = 'Working'
+    GROUP BY
+        employee_id
+),
+
+-- Данные по KPI за последний завершенный месяц
+latest_kpi AS (
+    SELECT DISTINCT ON (employee_id)
+        employee_id,
+        common_kpi,
+        personal_kpi,
+        team_kpi,
+        (year || '-' || month || '-01')::date AS kpi_month
+    FROM
+        kpis
+    WHERE
+        (year || '-' || month || '-01')::date <= date_trunc('month', CURRENT_DATE)
+    ORDER BY
+        employee_id, (year || '-' || month || '-01')::date DESC
+),
+
+-- Расчет рабочих дней с учетом графика и праздников
+working_days_calc AS (
+    SELECT
+        e.id AS employee_id,
+        COUNT(*) AS total_working_days
+    FROM
+        employees e
+    CROSS JOIN
+        generate_series(
+            date_trunc('month', CURRENT_DATE),
+            date_trunc('month', CURRENT_DATE) + INTERVAL '1 month' - INTERVAL '1 day',
+            '1 day'
+        ) AS day
+    JOIN
+        work_schedules ws ON e.work_schedule_id = ws.id
+    WHERE
+        CASE
+            WHEN ws.work_day = 5 AND ws.week_day = 2 THEN
+                EXTRACT(DOW FROM day) BETWEEN 1 AND 5 AND
+                NOT EXISTS (SELECT 1 FROM holidays h WHERE h.holiday_date = day::date)
+            ELSE
+                EXTRACT(DOW FROM day) NOT IN (0, 6)
+        END
+    GROUP BY
+        e.id
+)
+
+-- Основной запрос представления
+SELECT
+    ed.id AS employee_id,
+    ed.employee_name,
+    ed.department,
+    ed.position,
+    CASE
+        WHEN ed.work_day = 5 AND ed.week_day = 2 THEN '5/2'
+        ELSE ed.work_day::text || '/' || ed.week_day::text
+    END AS work_schedule,
+    date_trunc('month', CURRENT_DATE) AS calculation_month,
+    ed.base_salary,
+    ed.base_bonus,
+
+    -- Коэффициенты
+    COALESCE(lk.common_kpi / 100.0, 1.0) AS kpi_coefficient,
+    LEAST(1.2, 1.0 + (ed.experience_months / 12) * 0.01) AS experience_coefficient,
+    CASE
+        WHEN wdc.total_working_days > 0 THEN
+            COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+        ELSE 1.0
+    END AS attendance_coefficient,
+
+    -- Данные по отработанному времени
+    wdc.total_working_days,
+    COALESCE(asum.worked_days, 0) AS worked_days,
+    COALESCE(asum.worked_hours, 0) AS worked_hours,
+    COALESCE(asum.overtime_hours, 0) AS overtime_hours,
+
+    -- Расчет бонусов
+    COALESCE(asum.overtime_hours, 0) * 0.5 * (ed.base_salary / (ed.work_day * ed.work_hour)) AS overtime_bonus,
+    (ed.base_bonus *
+     COALESCE(lk.common_kpi / 100.0, 1.0) *
+     LEAST(1.2, 1.0 + (ed.experience_months / 12) * 0.01) *
+     CASE
+        WHEN wdc.total_working_days > 0 THEN
+            COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+        ELSE 1.0
+     END) AS adjusted_bonus,
+
+    -- Итоговый расчет
+    (ed.base_salary *
+     CASE
+        WHEN wdc.total_working_days > 0 THEN
+            COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+        ELSE 0
+     END) AS proportional_salary,
+
+    ((ed.base_salary *
+      CASE
+         WHEN wdc.total_working_days > 0 THEN
+             COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+         ELSE 0
+      END) +
+      (ed.base_bonus *
+       COALESCE(lk.common_kpi / 100.0, 1.0) *
+       LEAST(1.2, 1.0 + (ed.experience_months / 12) * 0.01) *
+       CASE
+          WHEN wdc.total_working_days > 0 THEN
+              COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+          ELSE 1.0
+       END +
+       COALESCE(asum.overtime_hours, 0) * 0.5 * (ed.base_salary / (ed.work_day * ed.work_hour)))) AS gross_salary,
+
+    ((ed.base_salary *
+      CASE
+         WHEN wdc.total_working_days > 0 THEN
+             COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+         ELSE 0
+      END) +
+      (ed.base_bonus *
+       COALESCE(lk.common_kpi / 100.0, 1.0) *
+       LEAST(1.2, 1.0 + (ed.experience_months / 12) * 0.01) *
+       CASE
+          WHEN wdc.total_working_days > 0 THEN
+              COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+          ELSE 1.0
+       END +
+       COALESCE(asum.overtime_hours, 0) * 0.5 * (ed.base_salary / (ed.work_day * ed.work_hour)))) * 0.13 AS tax_amount,
+
+    ((ed.base_salary *
+      CASE
+         WHEN wdc.total_working_days > 0 THEN
+             COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+         ELSE 0
+      END) +
+      (ed.base_bonus *
+       COALESCE(lk.common_kpi / 100.0, 1.0) *
+       LEAST(1.2, 1.0 + (ed.experience_months / 12) * 0.01) *
+       CASE
+          WHEN wdc.total_working_days > 0 THEN
+              COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+          ELSE 1.0
+       END +
+       COALESCE(asum.overtime_hours, 0) * 0.5 * (ed.base_salary / (ed.work_day * ed.work_hour)))) * 0.87 AS net_salary,
+
+    -- Дополнительная аналитика
+    COALESCE(lk.common_kpi, 100) AS kpi_score,
+    COALESCE(lk.personal_kpi, 100) AS personal_kpi_score,
+    COALESCE(lk.team_kpi, 100) AS team_kpi_score,
+    ed.experience_months,
+    CASE
+        WHEN wdc.total_working_days > 0 THEN
+            (wdc.total_working_days - COALESCE(asum.worked_days, 0))::numeric / wdc.total_working_days
+        ELSE 0
+    END AS absence_rate,
+
+    -- Ссылка на последний расчет в логе
+    (SELECT id FROM salary_calculation_log
+     WHERE employee_id = ed.id
+     AND period_start = date_trunc('month', CURRENT_DATE)
+     ORDER BY calculation_date DESC LIMIT 1) AS last_calculation_id,
+
+    (SELECT is_approved FROM salary_calculation_log
+     WHERE employee_id = ed.id
+     AND period_start = date_trunc('month', CURRENT_DATE)
+     ORDER BY calculation_date DESC LIMIT 1) AS is_approved
+FROM
+    employee_data ed
+LEFT JOIN
+    attendance_summary asum ON ed.id = asum.employee_id
+LEFT JOIN
+    latest_kpi lk ON ed.id = lk.employee_id
+LEFT JOIN
+    working_days_calc wdc ON ed.id = wdc.employee_id;
+
+
+
+ Примеры использования улучшенного представления
+
+ -- Получить расчет зарплат за текущий месяц
+ SELECT * FROM comprehensive_salary_report;
+
+ -- Отчет по отделам
+ SELECT
+     department,
+     COUNT(*) AS employees,
+     SUM(gross_salary) AS total_gross,
+     SUM(net_salary) AS total_net,
+     AVG(kpi_score) AS avg_kpi
+ FROM
+     comprehensive_salary_report
+ GROUP BY
+     department;
+
+ -- Детализация по сотруднику
+ SELECT * FROM comprehensive_salary_report
+ WHERE employee_id = 1;

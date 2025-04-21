@@ -1,0 +1,365 @@
+Примеры использования улучшенной функции
+
+CREATE OR REPLACE FUNCTION calculate_and_log_salary(
+    p_employee_id BIGINT DEFAULT NULL,
+    p_department_id BIGINT DEFAULT NULL,
+    p_calculated_by BIGINT,
+    p_period_start DATE DEFAULT NULL,
+    p_period_end DATE DEFAULT NULL,
+    p_include_tax BOOLEAN DEFAULT TRUE
+)
+RETURNS TABLE(
+    employee_id BIGINT,
+    employee_name TEXT,
+    department TEXT,
+    position TEXT,
+    work_schedule TEXT,
+    calculation_month DATE,
+    base_salary NUMERIC(12,2),
+    base_bonus NUMERIC(12,2),
+    kpi_coefficient NUMERIC(5,2),
+    experience_coefficient NUMERIC(5,2),
+    overtime_bonus NUMERIC(12,2),
+    attendance_coefficient NUMERIC(5,2),
+    calculated_bonus NUMERIC(12,2),
+    gross_salary NUMERIC(12,2),
+    tax_amount NUMERIC(12,2),
+    net_salary NUMERIC(12,2),
+    calculation_id BIGINT,
+    log_status TEXT
+) AS $$
+DECLARE
+    v_period_start DATE;
+    v_period_end DATE;
+    v_tax_rate NUMERIC(5,2) := 0.13;
+    v_calculation_id BIGINT;
+    v_employee_record RECORD;
+BEGIN
+    -- Установка периода расчета по умолчанию (текущий месяц)
+    IF p_period_start IS NULL OR p_period_end IS NULL THEN
+        v_period_start := date_trunc('month', CURRENT_DATE);
+        v_period_end := (date_trunc('month', CURRENT_DATE) + INTERVAL '1 month' - INTERVAL '1 day')::DATE;
+    ELSE
+        v_period_start := p_period_start;
+        v_period_end := p_period_end;
+    END IF;
+
+    -- Проверка, что указан сотрудник, выполняющий расчет
+    IF p_calculated_by IS NULL THEN
+        RAISE EXCEPTION 'Необходимо указать ID сотрудника, выполняющего расчет (calculated_by)';
+    END IF;
+
+    -- Создаем временную таблицу для результатов
+    CREATE TEMP TABLE temp_salary_results AS
+    SELECT
+        ed.id AS employee_id,
+        ed.employee_name,
+        ed.department,
+        ed.position,
+        ed.work_schedule,
+        date_trunc('month', v_period_start) AS calculation_month,
+        ed.base_salary,
+        ed.base_bonus,
+        COALESCE(lk.common_kpi / 100.0, 1.0) AS kpi_coefficient,
+        LEAST(1.2, 1.0 + (ed.experience_months / 12) * 0.01) AS experience_coefficient,
+        COALESCE(asum.overtime_hours, 0) * 0.5 * (ed.base_salary / (ed.work_day * ed.work_hour)) AS overtime_bonus,
+        CASE
+            WHEN wdc.total_working_days > 0 THEN
+                COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+            ELSE 1.0
+        END AS attendance_coefficient,
+        (ed.base_bonus *
+         COALESCE(lk.common_kpi / 100.0, 1.0) *
+         LEAST(1.2, 1.0 + (ed.experience_months / 12) * 0.01) *
+         CASE
+            WHEN wdc.total_working_days > 0 THEN
+                COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+            ELSE 1.0
+         END +
+         COALESCE(asum.overtime_hours, 0) * 0.5 * (ed.base_salary / (ed.work_day * ed.work_hour))) AS calculated_bonus,
+        (ed.base_salary *
+         CASE
+            WHEN wdc.total_working_days > 0 THEN
+                COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+            ELSE 0
+         END +
+         (ed.base_bonus *
+          COALESCE(lk.common_kpi / 100.0, 1.0) *
+          LEAST(1.2, 1.0 + (ed.experience_months / 12) * 0.01) *
+          CASE
+             WHEN wdc.total_working_days > 0 THEN
+                 COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+             ELSE 1.0
+          END +
+          COALESCE(asum.overtime_hours, 0) * 0.5 * (ed.base_salary / (ed.work_day * ed.work_hour)))) AS gross_salary,
+        CASE WHEN p_include_tax THEN
+            ((ed.base_salary *
+              CASE
+                 WHEN wdc.total_working_days > 0 THEN
+                     COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+                 ELSE 0
+              END) +
+              (ed.base_bonus *
+               COALESCE(lk.common_kpi / 100.0, 1.0) *
+               LEAST(1.2, 1.0 + (ed.experience_months / 12) * 0.01) *
+               CASE
+                  WHEN wdc.total_working_days > 0 THEN
+                      COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+                  ELSE 1.0
+               END +
+               COALESCE(asum.overtime_hours, 0) * 0.5 * (ed.base_salary / (ed.work_day * ed.work_hour)))) * v_tax_rate
+        ELSE 0 END AS tax_amount,
+        CASE WHEN p_include_tax THEN
+            ((ed.base_salary *
+              CASE
+                 WHEN wdc.total_working_days > 0 THEN
+                     COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+                 ELSE 0
+              END) +
+              (ed.base_bonus *
+               COALESCE(lk.common_kpi / 100.0, 1.0) *
+               LEAST(1.2, 1.0 + (ed.experience_months / 12) * 0.01) *
+               CASE
+                  WHEN wdc.total_working_days > 0 THEN
+                      COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+                  ELSE 1.0
+               END +
+               COALESCE(asum.overtime_hours, 0) * 0.5 * (ed.base_salary / (ed.work_day * ed.work_hour)))) * (1 - v_tax_rate)
+        ELSE
+            ((ed.base_salary *
+              CASE
+                 WHEN wdc.total_working_days > 0 THEN
+                     COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+                 ELSE 0
+              END) +
+              (ed.base_bonus *
+               COALESCE(lk.common_kpi / 100.0, 1.0) *
+               LEAST(1.2, 1.0 + (ed.experience_months / 12) * 0.01) *
+               CASE
+                  WHEN wdc.total_working_days > 0 THEN
+                      COALESCE(asum.worked_days, 0)::numeric / wdc.total_working_days
+                  ELSE 1.0
+               END +
+               COALESCE(asum.overtime_hours, 0) * 0.5 * (ed.base_salary / (ed.work_day * ed.work_hour)))
+        END AS net_salary,
+        NULL::BIGINT AS calculation_id,
+        'NEW'::TEXT AS log_status
+    FROM
+        (SELECT
+            e.id,
+            e.last_name || ' ' || e.first_name AS employee_name,
+            d.name AS department,
+            p.name AS position,
+            ws.work_day,
+            ws.week_day,
+            ws.work_hour,
+            sd.wage AS base_salary,
+            sd.bonus AS base_bonus,
+            EXTRACT(YEAR FROM age(CURRENT_DATE, e.date_of_admission)) * 12 +
+            EXTRACT(MONTH FROM age(CURRENT_DATE, e.date_of_admission)) AS experience_months,
+            CASE
+                WHEN ws.work_day = 5 AND ws.week_day = 2 THEN '5/2'
+                ELSE ws.work_day::text || '/' || ws.week_day::text
+            END AS work_schedule
+        FROM
+            employees e
+        JOIN
+            departments d ON e.department_id = d.id
+        JOIN
+            positions p ON e.position_id = p.id
+        JOIN
+            work_schedules ws ON e.work_schedule_id = ws.id
+        JOIN
+            salaries_data sd ON p.id = sd.position_id
+        WHERE
+            (p_employee_id IS NULL OR e.id = p_employee_id)
+            AND (p_department_id IS NULL OR e.department_id = p_department_id)
+        ) ed
+    LEFT JOIN
+        (SELECT
+            employee_id,
+            COUNT(*) AS worked_days,
+            SUM(work_hours) AS worked_hours,
+            SUM(CASE WHEN work_hours > (SELECT work_hour FROM work_schedules ws JOIN employees e ON ws.id = e.work_schedule_id WHERE e.id = ad.employee_id)
+                THEN work_hours - (SELECT work_hour FROM work_schedules ws JOIN employees e ON ws.id = e.work_schedule_id WHERE e.id = ad.employee_id)
+                ELSE 0 END) AS overtime_hours
+        FROM
+            attendance_data ad
+        WHERE
+            date_att BETWEEN v_period_start AND v_period_end
+            AND status = 'Working'
+        GROUP BY
+            employee_id
+        ) asum ON ed.id = asum.employee_id
+    LEFT JOIN
+        (SELECT DISTINCT ON (employee_id)
+            employee_id,
+            common_kpi,
+            personal_kpi,
+            team_kpi
+        FROM
+            kpis
+        WHERE
+            (year || '-' || month || '-01')::date <= v_period_end
+        ORDER BY
+            employee_id, (year || '-' || month || '-01')::date DESC
+        ) lk ON ed.id = lk.employee_id
+    LEFT JOIN
+        (SELECT
+            e.id AS employee_id,
+            COUNT(*) AS total_working_days
+        FROM
+            employees e
+        CROSS JOIN
+            generate_series(v_period_start, v_period_end, '1 day') AS day
+        JOIN
+            work_schedules ws ON e.work_schedule_id = ws.id
+        WHERE
+            CASE
+                WHEN ws.work_day = 5 AND ws.week_day = 2 THEN
+                    EXTRACT(DOW FROM day) BETWEEN 1 AND 5 AND
+                    NOT EXISTS (SELECT 1 FROM holidays h WHERE h.holiday_date = day::date)
+                ELSE
+                    EXTRACT(DOW FROM day) NOT IN (0, 6)
+            END
+        GROUP BY
+            e.id
+        ) wdc ON ed.id = wdc.employee_id;
+
+    -- Логирование результатов расчета
+    FOR v_employee_record IN SELECT * FROM temp_salary_results LOOP
+        INSERT INTO salary_calculation_log (
+            calculation_date,
+            calculated_by,
+            employee_id,
+            period_start,
+            period_end,
+            base_salary,
+            base_bonus,
+            kpi_coefficient,
+            experience_coefficient,
+            overtime_bonus,
+            attendance_coefficient,
+            calculated_bonus,
+            gross_salary,
+            tax_amount,
+            net_salary,
+            calculation_details,
+            is_approved
+        ) VALUES (
+            CURRENT_TIMESTAMP,
+            p_calculated_by,
+            v_employee_record.employee_id,
+            v_period_start,
+            v_period_end,
+            v_employee_record.base_salary,
+            v_employee_record.base_bonus,
+            v_employee_record.kpi_coefficient,
+            v_employee_record.experience_coefficient,
+            v_employee_record.overtime_bonus,
+            v_employee_record.attendance_coefficient,
+            v_employee_record.calculated_bonus,
+            v_employee_record.gross_salary,
+            v_employee_record.tax_amount,
+            v_employee_record.net_salary,
+            jsonb_build_object(
+                'working_days', (SELECT total_working_days FROM working_days_calc WHERE employee_id = v_employee_record.employee_id),
+                'worked_days', v_employee_record.worked_days,
+                'worked_hours', (SELECT worked_hours FROM attendance_summary WHERE employee_id = v_employee_record.employee_id),
+                'overtime_hours', v_employee_record.overtime_hours,
+                'kpi_details', jsonb_build_object(
+                    'personal', (SELECT personal_kpi FROM latest_kpi WHERE employee_id = v_employee_record.employee_id),
+                    'team', (SELECT team_kpi FROM latest_kpi WHERE employee_id = v_employee_record.employee_id)
+                ),
+                'calculation_parameters', jsonb_build_object(
+                    'tax_included', p_include_tax,
+                    'tax_rate', v_tax_rate,
+                    'overtime_rate', 0.5,
+                    'experience_bonus_rate', 0.01
+                )
+            ),
+            FALSE
+        )
+        RETURNING id INTO v_calculation_id;
+
+        -- Обновляем временную таблицу с ID расчета
+        UPDATE temp_salary_results
+        SET
+            calculation_id = v_calculation_id,
+            log_status = 'LOGGED'
+        WHERE employee_id = v_employee_record.employee_id;
+    END LOOP;
+
+    -- Возвращаем результаты
+    RETURN QUERY SELECT
+        employee_id,
+        employee_name,
+        department,
+        position,
+        work_schedule,
+        calculation_month,
+        base_salary,
+        base_bonus,
+        kpi_coefficient,
+        experience_coefficient,
+        overtime_bonus,
+        attendance_coefficient,
+        calculated_bonus,
+        gross_salary,
+        tax_amount,
+        net_salary,
+        calculation_id,
+        log_status
+    FROM temp_salary_results;
+
+    -- Удаляем временную таблицу
+    DROP TABLE temp_salary_results;
+END;
+$$ LANGUAGE plpgsql;
+
+
+Примеры использования функции с логированием
+
+1. Расчет и логирование зарплаты для конкретного сотрудника
+SELECT * FROM calculate_and_log_salary(
+    p_employee_id => 1,
+    p_calculated_by => 10, -- ID HR-специалиста
+    p_period_start => '2023-10-01',
+    p_period_end => '2023-10-31'
+);
+
+2. Расчет и логирование зарплат для всего отдела
+SELECT * FROM calculate_and_log_salary(
+    p_department_id => 2, -- ID отдела
+    p_calculated_by => 10,
+    p_period_start => '2023-10-01',
+    p_period_end => '2023-10-31'
+);
+
+3. Расчет без учета налогов (для предварительного просмотра)
+SELECT * FROM calculate_and_log_salary(
+    p_department_id => 1,
+    p_calculated_by => 10,
+    p_include_tax => false
+);
+
+Проверка записанных логов
+-- Последние 5 расчетов
+SELECT
+    l.id,
+    l.calculation_date,
+    calc.last_name || ' ' || calc.first_name AS calculated_by,
+    e.last_name || ' ' || e.first_name AS employee,
+    l.period_start,
+    l.period_end,
+    l.net_salary,
+    l.is_approved
+FROM
+    salary_calculation_log l
+JOIN
+    employees e ON l.employee_id = e.id
+JOIN
+    employees calc ON l.calculated_by = calc.id
+ORDER BY
+    l.calculation_date DESC
+LIMIT 5;
