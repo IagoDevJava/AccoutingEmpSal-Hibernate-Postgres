@@ -20,7 +20,6 @@
   <modules>
     <module>bank-employees-salaries-api</module>
     <module>bank-employees-salaries-impl</module>
-    <module>bank-employees-salaries-db</module>
   </modules>
 
   <properties>
