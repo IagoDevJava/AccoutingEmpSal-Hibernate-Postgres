@@ -12,7 +12,7 @@
     <artifactId>bank-employees-salaries-impl</artifactId>
 
     <properties>
-        <start-class>com.anybank.AccountingEmployeesSalariesApplication</start-class>
+        <start-class>com.egorov.AccountingEmployeesSalariesApplication</start-class>
     </properties>
 
     <dependencies>

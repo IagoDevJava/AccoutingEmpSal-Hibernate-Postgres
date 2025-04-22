@@ -1,22 +1,55 @@
 server:
   port: 8080
 
+application:
+  name: aes-manage
+
 spring:
-  application:
-    name: aes-service
-  profiles:
-    active: dev
-  datasource:
-    url: jdbc:postgresql://localhost:5432/aes
-    username: aes-manager
-    password: test
-    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+  mvc:
+    locale-resolver: fixed
+  jackson:
+    serialization:
+      indent_output: true
+      fail_on_empty_beans: false
+  cache:
+    caffeine:
+      spec: maximumSize=500,expireAfterAccess=3600s
+
+
+app:
+  aes-manage:
+    max-pages-of-partial-content: 20
+#  dwh:
+#    sql.search.contract:
+#      common:
+#        main-file: "/etl-arm-data-marts/common/search_kasko_contract_by_attributes.sql"  # ???????? SQL-??????
+#        subject-object-file: "/etl-arm-data-marts/search_kasko_contract_subj_obj.sql"    # SQL ??? ?????????/????????
+#        person-file: "/etl-arm-data-marts/common/search_person_pr_normal.sql"           # SQL ??? ??????
+#        organization-file: "/etl-arm-data-marts/common/search_organization_pr_normal.sql" # SQL ??? ?????
+#        vehicle-file: "/etl-arm-data-marts/common/search_vehicle_pr_normal.sql"         # SQL ??? ??
+#      golden-records:
+#        person: "/etl-arm-data-marts/golden-record/search_kasko_contract_person.sql"    # SQL ??? "??????? ???????" ??????
+#        organization: "/etl-arm-data-marts/golden-record/search_kasko_contract_org.sql" # SQL ??? "??????? ???????" ?????
+#        vehicle: "/etl-arm-data-marts/golden-record/search_kasko_contract_vehicle.sql"  # SQL ??? "??????? ???????" ??
+    datasource:
+      driver-class-name: org.postgresql.Driver
+      url: jdbc:postgresql://localhost:5432/aes
+      username: aes-manager
+      password: test
+      testOnBorrow: true
+      testWhileIdle: true
+      validationQuery: select 1
+      hikari:
+        maximumPoolSize: 25
+        minimumIdle: 5
 
 springdoc:
+  api-docs:
+    path: /aes/api-docs
   swagger-ui:
     path: /aes/swagger-ui.html
     enabled: true
